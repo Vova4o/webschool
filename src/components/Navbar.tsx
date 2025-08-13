@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -58,7 +58,7 @@ export default function Navbar() {
               <span className="sr-only">Открыть главное меню</span>
               {/* Hamburger icon */}
               <svg
-                className={`${isOpen ? 'hidden' : 'block'} h-6 w-6`}
+                className={`${isOpen ? "hidden" : "block"} h-6 w-6`}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -74,7 +74,7 @@ export default function Navbar() {
               </svg>
               {/* Close icon */}
               <svg
-                className={`${isOpen ? 'block' : 'hidden'} h-6 w-6`}
+                className={`${isOpen ? "block" : "hidden"} h-6 w-6`}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
@@ -93,7 +93,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Navigation Menu */}
-        <div className={`${isOpen ? 'block' : 'hidden'} md:hidden`}>
+        <div className={`${isOpen ? "block" : "hidden"} md:hidden`}>
           <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
             <Link
               href="/"
