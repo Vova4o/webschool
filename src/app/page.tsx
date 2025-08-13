@@ -182,7 +182,7 @@ export default function Home() {
                   Go
                 </div>
                 <span className="ml-3 text-xl font-bold text-gray-900 dark:text-white">
-                  Веб Школа
+                  Изучаем! Повторяем!
                 </span>
               </div>
               <p className="mt-4 text-gray-600 dark:text-gray-400">
@@ -260,7 +260,8 @@ export default function Home() {
           </div>
           <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
             <p className="text-base text-gray-400 dark:text-gray-500 text-center">
-              © 2025 Go Веб Школа. Создано с помощью Next.js и Tailwind CSS.
+              © 2025 Go Изучаем! Повторяем!. Создано с помощью Next.js и
+              Tailwind CSS.
             </p>
           </div>
         </div>
