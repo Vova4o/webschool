@@ -5,13 +5,13 @@ export default function Home() {
   return (
     <div className="font-sans min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900 relative">
       {/* Go Mascot in bottom right corner */}
-      <div className="fixed bottom-4 right-4 opacity-30 pointer-events-none z-10">
+      <div className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 opacity-30 pointer-events-none z-10">
         <Image
           src="/gopherdrink-3547479203.png"
           alt="Go Mascot с напитком"
-          width={120}
-          height={120}
-          className="transform -rotate-12"
+          width={80}
+          height={80}
+          className="transform -rotate-12 sm:w-[120px] sm:h-[120px]"
         />
       </div>
 
@@ -26,19 +26,19 @@ export default function Home() {
             примеров и практических упражнений. От основ до продвинутых
             концепций — мы проведём вас через всё путешествие изучения Go.
           </p>
-          <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
+          <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8 space-y-3 sm:space-y-0">
             <div className="rounded-md shadow">
               <Link
                 href="/tutorials"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-6 py-4 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors md:py-4 md:text-lg md:px-10"
               >
                 Начать обучение
               </Link>
             </div>
-            <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
+            <div className="rounded-md shadow sm:ml-3">
               <Link
                 href="/examples"
-                className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-6 py-4 border border-gray-300 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 transition-colors md:py-4 md:text-lg md:px-10"
               >
                 Смотреть примеры
               </Link>

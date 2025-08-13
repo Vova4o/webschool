@@ -15,7 +15,7 @@ export default function Navbar() {
             <div className="bg-blue-600 text-white px-3 py-2 rounded-lg font-bold text-xl">
               Go
             </div>
-            <h1 className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="ml-3 text-xl sm:text-2xl font-bold text-gray-900 dark:text-white truncate">
               Изучаем! Повторяем!
             </h1>
           </Link>
@@ -94,31 +94,31 @@ export default function Navbar() {
 
         {/* Mobile Navigation Menu */}
         <div className={`${isOpen ? "block" : "hidden"} md:hidden`}>
-          <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700">
+          <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <Link
               href="/"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="block px-4 py-3 rounded-md text-base font-medium text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               🏠 Главная
             </Link>
             <Link
               href="/tutorials"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="block px-4 py-3 rounded-md text-base font-medium text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               📚 Уроки
             </Link>
             <Link
               href="/examples"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="block px-4 py-3 rounded-md text-base font-medium text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               💻 Примеры
             </Link>
             <Link
               href="/reference"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              className="block px-4 py-3 rounded-md text-base font-medium text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               📖 Справочник
