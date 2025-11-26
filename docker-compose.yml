@@ -28,8 +28,11 @@ services:
       dockerfile: Dockerfile
     container_name: webschool-app
     restart: unless-stopped
+    expose:
+      - "3000"
     networks:
       - webschool
+      - default
     environment:
       # Database - simplified internal connection
       POSTGRES_URL: postgresql://postgres:${POSTGRES_PASSWORD:-your_secure_password}@postgres:5432/webschool
