@@ -26,11 +26,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      # Enable BuildKit features
-      cache_from:
-        - type=registry,ref=ghcr.io/vova4o/webschool:buildcache
-      cache_to:
-        - type=inline
     container_name: webschool-app
     restart: unless-stopped
     ports:
