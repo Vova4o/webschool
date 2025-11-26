@@ -1,7 +1,19 @@
 import Link from "next/link";
 import { getTutorials, Tutorial } from "@/lib/db";
+import { Metadata } from "next";
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic';
+
+export const metadata: Metadata = {
+  title: "Go Tutorials | WebSchool",
+  description:
+    "Learn Go programming from basics to advanced topics including PostgreSQL, Redis, Kafka, Docker, and microservices.",
+  openGraph: {
+    title: "Go Tutorials | WebSchool",
+    description:
+      "Learn Go programming from basics to advanced topics including PostgreSQL, Redis, Kafka, Docker, and microservices.",
+  },
+};
 
 interface FallbackTutorial {
   title: string;

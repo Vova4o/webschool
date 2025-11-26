@@ -1,19 +1,41 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTutorialBySlug, getTutorials, checkUserAccess } from "@/lib/db";
+import { getTutorialBySlug, checkUserAccess } from "@/lib/db";
 import { auth } from "@/auth";
+import { Metadata } from "next";
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic';
 
-export async function generateStaticParams() {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
   try {
-    const tutorials = await getTutorials();
-    return tutorials.map((tutorial) => ({
-      slug: tutorial.slug,
-    }));
+    const tutorial = await getTutorialBySlug(slug);
+
+    if (!tutorial) {
+      return {
+        title: "Tutorial Not Found",
+      };
+    }
+
+    return {
+      title: `${tutorial.title} | WebSchool`,
+      description: tutorial.description,
+      openGraph: {
+        title: tutorial.title,
+        description: tutorial.description,
+        type: "article",
+      },
+    };
   } catch (error) {
-    console.error("Error generating static params:", error);
-    return [];
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Tutorial | WebSchool",
+    };
   }
 }
 
