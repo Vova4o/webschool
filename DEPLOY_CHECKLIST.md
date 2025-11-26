@@ -3,6 +3,7 @@
 ## Pre-Deployment Steps
 
 ### 1. ✅ Code is Ready
+
 - [x] NextAuth.js integrated
 - [x] Premium content system implemented
 - [x] Database schema created
@@ -44,12 +45,14 @@ git push origin main
 ### 4. 🌐 Dokploy Configuration
 
 #### Create Application:
+
 1. Login to Dokploy dashboard
 2. Click "New Application"
 3. Select "Docker Compose"
 4. Name: `webschool`
 
 #### Configure Git:
+
 - Repository: `https://github.com/Vova4o/webschool`
 - Branch: `main`
 - Build path: `/`
@@ -76,6 +79,7 @@ NODE_ENV=production
 ```
 
 #### Configure Domain:
+
 - Domain: `school.vova4o.com`
 - SSL/TLS: Enable (Let's Encrypt)
 - Port: `3000`
@@ -100,6 +104,7 @@ After successful deployment:
 ### 7. ✅ Verify Deployment
 
 Test these URLs:
+
 - [ ] Homepage: https://school.vova4o.com
 - [ ] Tutorials: https://school.vova4o.com/tutorials
 - [ ] Register: https://school.vova4o.com/auth/register
@@ -118,6 +123,7 @@ Test these URLs:
 ## 📊 Quick Commands
 
 ### Push to GitHub:
+
 ```bash
 git add .
 git commit -m "Deploy to Dokploy"
@@ -125,17 +131,20 @@ git push origin main
 ```
 
 ### View Logs (SSH to server):
+
 ```bash
 docker-compose logs -f app
 docker-compose logs -f postgres
 ```
 
 ### Restart Services:
+
 ```bash
 docker-compose restart
 ```
 
 ### Database Backup:
+
 ```bash
 docker exec webschool-db pg_dump -U postgres webschool > backup.sql
 ```
@@ -143,16 +152,19 @@ docker exec webschool-db pg_dump -U postgres webschool > backup.sql
 ## 🔍 Troubleshooting
 
 ### Build fails:
+
 - Check environment variables are set
 - Verify GitHub repo is accessible
 - Check Dokploy logs
 
 ### Database connection error:
+
 - Ensure POSTGRES_URL is correctly formatted
 - Wait for database health check to pass
 - Check postgres container logs
 
 ### Can't access site:
+
 - Verify domain DNS points to Dokploy server
 - Check SSL certificate is issued
 - Ensure port 3000 is exposed
@@ -160,6 +172,7 @@ docker exec webschool-db pg_dump -U postgres webschool > backup.sql
 ## 📞 Support
 
 For detailed guides, see:
+
 - `DOKPLOY_DEPLOYMENT.md` - Full deployment guide
 - `DOCKER_README.md` - Docker configuration
 - `NEXTAUTH_SETUP.md` - Authentication setup
@@ -168,6 +181,7 @@ For detailed guides, see:
 ---
 
 Ready to deploy? Run:
+
 ```bash
 git add . && git commit -m "Ready for Dokploy" && git push origin main
 ```
