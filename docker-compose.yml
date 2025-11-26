@@ -2,7 +2,6 @@ services:
   # PostgreSQL Database
   postgres:
     image: postgres:15-alpine
-    container_name: webschool-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: webschool
@@ -26,13 +25,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: webschool-app
     restart: unless-stopped
     expose:
       - "3000"
     networks:
       - webschool
-      - default
+      - dokploy-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.webschool-app.rule=Host(`school.vova4o.com`)"
+      - "traefik.http.routers.webschool-app.entrypoints=web"
+      - "traefik.http.services.webschool-app.loadbalancer.server.port=3000"
+      - "traefik.docker.network=dokploy-network"
     environment:
       # Database - simplified internal connection
       POSTGRES_URL: postgresql://postgres:${POSTGRES_PASSWORD:-your_secure_password}@postgres:5432/webschool
@@ -60,6 +64,8 @@ networks:
   webschool:
     driver: bridge
     name: webschool
+  dokploy-network:
+    external: true
 
 volumes:
   postgres_data:
