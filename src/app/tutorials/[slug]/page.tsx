@@ -4,7 +4,7 @@ import { getTutorialBySlug, checkUserAccess } from "@/lib/db";
 import { auth } from "@/auth";
 import { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

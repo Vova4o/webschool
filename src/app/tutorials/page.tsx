@@ -2,7 +2,7 @@ import Link from "next/link";
 import { getTutorials, Tutorial } from "@/lib/db";
 import { Metadata } from "next";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Go Tutorials | WebSchool",
