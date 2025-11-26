@@ -1,107 +1,88 @@
 import Link from "next/link";
+import { getTutorials, Tutorial } from "@/lib/db";
 
-export default function Tutorials() {
-  const basicTutorials = [
-    {
-      title: "Начало работы с Go",
-      description:
-        "Изучите основы программирования на Go, установку и вашу первую программу.",
-      level: "Начинающий",
-      duration: "30 мин",
-      slug: "getting-started",
-    },
-    {
-      title: "Переменные и типы данных",
-      description:
-        "Изучите систему типов Go, переменные, константы и базовые типы данных.",
-      level: "Начинающий",
-      duration: "45 мин",
-      slug: "variables-and-types",
-    },
-    {
-      title: "Управляющие конструкции",
-      description:
-        "Освойте условные операторы, циклы и switch-конструкции в Go.",
-      level: "Начинающий",
-      duration: "60 мин",
-      slug: "control-structures",
-    },
-    {
-      title: "Функции и методы",
-      description:
-        "Научитесь писать функции, обрабатывать множественные возвращаемые значения и создавать методы.",
-      level: "Средний",
-      duration: "75 мин",
-      slug: "functions-and-methods",
-    },
-    {
-      title: "Структуры и интерфейсы",
-      description:
-        "Изучите подход Go к объектно-ориентированному программированию со структурами и интерфейсами.",
-      level: "Средний",
-      duration: "90 мин",
-      slug: "structs-and-interfaces",
-    },
-    {
-      title: "Параллелизм с горутинами",
-      description:
-        "Погрузитесь в мощную модель параллелизма Go с горутинами и каналами.",
-      level: "Продвинутый",
-      duration: "120 мин",
-      slug: "goroutines-and-channels",
-    },
-  ];
+export const revalidate = 60; // Revalidate every 60 seconds
 
-  const advancedTutorials = [
-    {
-      title: "Работа с PostgreSQL",
-      description:
-        "Изучите подключение к PostgreSQL, выполнение запросов и работу с транзакциями в Go.",
-      level: "Продвинутый",
-      duration: "120 мин",
-      slug: "postgresql-integration",
-    },
-    {
-      title: "Интеграция с Redis",
-      description:
-        "Освойте кэширование данных и работу с Redis в Go приложениях.",
-      level: "Продвинутый",
-      duration: "90 мин",
-      slug: "redis-caching",
-    },
-    {
-      title: "Работа с Apache Kafka",
-      description:
-        "Изучите отправку и получение сообщений через Apache Kafka в Go.",
-      level: "Продвинутый",
-      duration: "150 мин",
-      slug: "kafka-messaging",
-    },
-    {
-      title: "RabbitMQ и очереди сообщений",
-      description:
-        "Настройте систему обмена сообщениями с RabbitMQ в Go приложениях.",
-      level: "Продвинутый",
-      duration: "135 мин",
-      slug: "rabbitmq-queues",
-    },
-    {
-      title: "Docker и контейнеризация",
-      description:
-        "Создайте Docker-образы для Go приложений и настройте развертывание.",
-      level: "Продвинутый",
-      duration: "100 мин",
-      slug: "docker-containerization",
-    },
-    {
-      title: "Микросервисы с gRPC",
-      description:
-        "Постройте микросервисную архитектуру используя gRPC и Protocol Buffers.",
-      level: "Продвинутый",
-      duration: "180 мин",
-      slug: "grpc-microservices",
-    },
-  ];
+interface FallbackTutorial {
+  title: string;
+  description: string;
+  level: string;
+  duration: string;
+  slug: string;
+}
+
+export default async function Tutorials() {
+  let basicTutorials: (Tutorial | FallbackTutorial)[] = [];
+  let advancedTutorials: (Tutorial | FallbackTutorial)[] = [];
+
+  try {
+    const allTutorials = await getTutorials();
+    basicTutorials = allTutorials.filter((t) => t.category === "basics");
+    advancedTutorials = allTutorials.filter((t) => t.category === "advanced");
+  } catch (error) {
+    console.error("Failed to fetch tutorials from database:", error);
+    // Use fallback data if database is not available
+    basicTutorials = [
+      {
+        title: "Начало работы с Go",
+        description:
+          "Изучите основы программирования на Go, установку и вашу первую программу.",
+        level: "Начинающий",
+        duration: "30 мин",
+        slug: "getting-started",
+      },
+    ];
+    advancedTutorials = [
+      {
+        title: "Работа с PostgreSQL",
+        description:
+          "Изучите подключение к PostgreSQL, выполнение запросов и работу с транзакциями в Go.",
+        level: "Продвинутый",
+        duration: "120 мин",
+        slug: "postgresql-integration",
+      },
+      {
+        title: "Интеграция с Redis",
+        description:
+          "Освойте кэширование данных и работу с Redis в Go приложениях.",
+        level: "Продвинутый",
+        duration: "90 мин",
+        slug: "redis-caching",
+      },
+      {
+        title: "Работа с Apache Kafka",
+        description:
+          "Изучите отправку и получение сообщений через Apache Kafka в Go.",
+        level: "Продвинутый",
+        duration: "150 мин",
+        slug: "kafka-messaging",
+      },
+      {
+        title: "RabbitMQ и очереди сообщений",
+        description:
+          "Настройте систему обмена сообщениями с RabbitMQ в Go приложениях.",
+        level: "Продвинутый",
+        duration: "135 мин",
+        slug: "rabbitmq-queues",
+      },
+      {
+        title: "Docker и контейнеризация",
+        description:
+          "Создайте Docker-образы для Go приложений и настройте развертывание.",
+        level: "Продвинутый",
+        duration: "100 мин",
+        slug: "docker-containerization",
+      },
+      {
+        title: "Микросервисы с gRPC",
+        description:
+          "Постройте микросервисную архитектуру используя gRPC и Protocol Buffers.",
+        level: "Продвинутый",
+        duration: "180 мин",
+        slug: "grpc-microservices",
+      },
+    ];
+  }
 
   const getLevelColor = (level: string) => {
     switch (level) {
@@ -119,30 +100,30 @@ export default function Tutorials() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white">
             Уроки программирования на Go
           </h2>
-          <p className="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          <p className="mt-3 sm:mt-4 text-base sm:text-xl text-gray-600 dark:text-gray-400 px-2">
             Освойте программирование на Go с помощью наших пошаговых уроков, от
             основ до продвинутых практик с инструментами.
           </p>
         </div>
 
         {/* Базовые знания */}
-        <div className="mb-16">
-          <div className="mb-8">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-12 sm:mb-16">
+          <div className="mb-6 sm:mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
               📚 Базовые знания
             </h3>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
               Изучите основы языка Go: синтаксис, типы данных, функции и
               ключевые концепции.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {basicTutorials.map((tutorial) => (
               <div
                 key={tutorial.slug}
@@ -193,18 +174,18 @@ export default function Tutorials() {
         </div>
 
         {/* Продвинутые практики */}
-        <div className="mb-16">
-          <div className="mb-8">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+        <div className="mb-12 sm:mb-16">
+          <div className="mb-6 sm:mb-8">
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
               🚀 Продвинутые практики с инструментами
             </h3>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400">
               Изучите интеграцию Go с популярными инструментами: PostgreSQL,
               Redis, Kafka, RabbitMQ и др.
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {advancedTutorials.map((tutorial) => (
               <div
                 key={tutorial.slug}

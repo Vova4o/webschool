@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import UserNav from "./UserNav";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,32 +22,35 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            <Link
-              href="/"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Главная
-            </Link>
-            <Link
-              href="/tutorials"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Уроки
-            </Link>
-            <Link
-              href="/examples"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Примеры
-            </Link>
-            <Link
-              href="/reference"
-              className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Справочник
-            </Link>
-          </nav>
+          <div className="hidden md:flex items-center space-x-8">
+            <nav className="flex space-x-8">
+              <Link
+                href="/"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Главная
+              </Link>
+              <Link
+                href="/tutorials"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Уроки
+              </Link>
+              <Link
+                href="/examples"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Примеры
+              </Link>
+              <Link
+                href="/reference"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Справочник
+              </Link>
+            </nav>
+            <UserNav />
+          </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden">

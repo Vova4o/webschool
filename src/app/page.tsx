@@ -16,29 +16,29 @@ export default function Home() {
       </div>
 
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <div className="text-center relative">
-          <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl md:text-6xl relative z-10">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl relative z-10 leading-tight">
             Изучайте программирование на Go
           </h2>
-          <p className="mt-3 max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl relative z-10">
+          <p className="mt-3 max-w-md mx-auto text-sm text-gray-500 dark:text-gray-400 sm:text-base md:text-lg md:mt-5 lg:text-xl md:max-w-3xl relative z-10">
             Освойте язык программирования Go с помощью наших комплексных уроков,
             примеров и практических упражнений. От основ до продвинутых
             концепций — мы проведём вас через всё путешествие изучения Go.
           </p>
-          <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8 space-y-3 sm:space-y-0">
-            <div className="rounded-md shadow">
+          <div className="mt-5 max-w-md mx-auto flex flex-col sm:flex-row sm:justify-center md:mt-8 gap-3 sm:gap-0">
+            <div className="rounded-md shadow w-full sm:w-auto">
               <Link
                 href="/tutorials"
-                className="w-full flex items-center justify-center px-6 py-4 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors sm:py-4 md:text-lg md:px-10"
               >
                 Начать обучение
               </Link>
             </div>
-            <div className="rounded-md shadow sm:ml-3">
+            <div className="rounded-md shadow sm:ml-3 w-full sm:w-auto">
               <Link
                 href="/examples"
-                className="w-full flex items-center justify-center px-6 py-4 border border-gray-300 text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 transition-colors md:py-4 md:text-lg md:px-10"
+                className="w-full flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors sm:py-4 md:text-lg md:px-10"
               >
                 Смотреть примеры
               </Link>
@@ -47,9 +47,9 @@ export default function Home() {
         </div>
 
         {/* Features Section */}
-        <div className="mt-16">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <div className="mt-12 sm:mt-16">
+          <div className="grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-5 sm:p-6">
               <div className="flex items-center">
                 <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-3">
                   <svg

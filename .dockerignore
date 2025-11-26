@@ -1,0 +1,36 @@
+# Ignore everything in .git
+.git
+.gitignore
+
+# Ignore node_modules
+node_modules
+
+# Ignore local env files
+.env.local
+.env*.local
+
+# Ignore Next.js build output
+.next
+
+# Ignore development files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore test coverage
+coverage
+
+# Ignore documentation (optional)
+*.md
+!README.md
+!DOKPLOY_DEPLOYMENT.md
