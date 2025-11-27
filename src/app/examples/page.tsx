@@ -13,7 +13,7 @@ export default function Examples() {
         const res = await fetch("/api/examples");
         if (res.ok) {
           const data = await res.json();
-          setExamples(data.examples || []);
+          setExamples(Array.isArray(data) ? data : []);
         }
       } catch (error) {
         console.error("Failed to fetch examples:", error);
