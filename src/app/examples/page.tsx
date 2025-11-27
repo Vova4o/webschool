@@ -1,23 +1,26 @@
+"use client";
+
 import Link from "next/link";
-import { getExamples, Example } from "@/lib/db";
-import { Metadata } from "next";
+import { Example } from "@/lib/db";
+import { useEffect, useState } from "react";
 
-export const dynamic = "force-dynamic";
+export default function Examples() {
+  const [examples, setExamples] = useState<Example[]>([]);
 
-export const metadata: Metadata = {
-  title: "Go Code Examples | WebSchool",
-  description:
-    "Practical Go programming examples covering basics, data structures, concurrency, and more.",
-};
-
-export default async function Examples() {
-  let examples: Example[] = [];
-
-  try {
-    examples = await getExamples();
-  } catch (error) {
-    console.error("Failed to fetch examples:", error);
-  }
+  useEffect(() => {
+    async function fetchExamples() {
+      try {
+        const res = await fetch("/api/examples");
+        if (res.ok) {
+          const data = await res.json();
+          setExamples(data.examples || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch examples:", error);
+      }
+    }
+    fetchExamples();
+  }, []);
 
   const fallbackExamples = [
     {
