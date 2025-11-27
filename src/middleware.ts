@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export async function middleware(request: NextRequest) {
   // Allow NextAuth routes to pass through
@@ -6,35 +7,27 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protect /admin routes and /api/admin routes with Basic Auth
+  // Protect /admin routes and /api/admin routes with NextAuth session
   if (
     request.nextUrl.pathname.startsWith("/admin") ||
     request.nextUrl.pathname.startsWith("/api/admin")
   ) {
-    const basicAuth = request.headers.get("authorization");
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
 
-    if (!basicAuth) {
-      return new NextResponse("Authentication required", {
-        status: 401,
-        headers: {
-          "WWW-Authenticate": 'Basic realm="Admin Area"',
-        },
-      });
+    // Check if user is logged in
+    if (!token) {
+      const signInUrl = new URL("/auth/signin", request.url);
+      signInUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
+      return NextResponse.redirect(signInUrl);
     }
 
-    const authValue = basicAuth.split(" ")[1];
-    const [user, password] = atob(authValue).split(":");
-
-    // Check against environment variables
-    const ADMIN_USER = process.env.ADMIN_USER || "admin";
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "changeme";
-
-    if (user !== ADMIN_USER || password !== ADMIN_PASSWORD) {
-      return new NextResponse("Invalid credentials", {
-        status: 401,
-        headers: {
-          "WWW-Authenticate": 'Basic realm="Admin Area"',
-        },
+    // Check if user has admin role
+    if (token.role !== "admin") {
+      return new NextResponse("Access Denied", {
+        status: 403,
       });
     }
   }
@@ -43,5 +36,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*", "/api/auth/:path*"],
+  matcher: ["/admin/:path*", "/api/auth/:path*"],
 };

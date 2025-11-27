@@ -1,4 +1,10 @@
-import { createTutorialsTable, createTutorial, createExample } from "@/lib/db";
+import {
+  createTutorialsTable,
+  createTutorial,
+  createExample,
+  createUser,
+} from "@/lib/db";
+import bcrypt from "bcryptjs";
 
 const tutorialsData = [
   {
@@ -195,6 +201,28 @@ export async function seedDatabase() {
   try {
     console.log("Creating tutorials table...");
     await createTutorialsTable();
+
+    // Create admin user
+    console.log("Creating admin user...");
+    try {
+      const adminPassword = await bcrypt.hash("admin123", 10);
+      await createUser({
+        email: "admin@webschool.com",
+        password_hash: adminPassword,
+        name: "Admin",
+        role: "admin",
+        is_premium: true,
+        premium_until: null,
+      });
+      console.log("Admin user created: admin@webschool.com / admin123");
+    } catch (error) {
+      const err = error as { code?: string; message?: string };
+      if (err?.code === "23505" || err?.message?.includes("duplicate")) {
+        console.log("Admin user already exists - skipping");
+      } else {
+        throw error;
+      }
+    }
 
     console.log("Seeding tutorials...");
     for (const tutorial of tutorialsData) {

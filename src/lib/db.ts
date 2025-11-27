@@ -248,6 +248,13 @@ export async function getUserByEmail(email: string): Promise<User | null> {
   return rows[0] || null;
 }
 
+export async function getUserCount(): Promise<number> {
+  const { rows } = await sql<{ count: string }>`
+    SELECT COUNT(*) as count FROM users
+  `;
+  return parseInt(rows[0]?.count || "0", 10);
+}
+
 export async function getUserById(id: number): Promise<User | null> {
   const { rows } = await sql<User>`
     SELECT * FROM users 

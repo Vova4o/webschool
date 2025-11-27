@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { createUser, getUserByEmail } from "@/lib/db";
+import { createUser, getUserByEmail, getUserCount } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,24 +33,32 @@ export async function POST(request: NextRequest) {
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
+    // Check if this is the first user - make them admin
+    const userCount = await getUserCount();
+    const isFirstUser = userCount === 0;
+
     // Create user
     const user = await createUser({
       email,
       password_hash: passwordHash,
       name,
-      role: "user",
-      is_premium: false,
+      role: isFirstUser ? "admin" : "user",
+      is_premium: isFirstUser ? true : false, // First user gets premium
       premium_until: null,
     });
 
     return NextResponse.json(
       {
-        message: "User created successfully",
+        message: isFirstUser
+          ? "Congratulations! You're the first user and have been granted admin access. Go to /admin to manage the site."
+          : "User created successfully",
         user: {
           id: user.id,
           email: user.email,
           name: user.name,
+          role: user.role,
         },
+        isAdmin: isFirstUser,
       },
       { status: 201 }
     );
