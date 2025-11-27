@@ -363,13 +363,13 @@ export default function AdminDashboard() {
                   </select>
                   <select
                     name="level"
-                    defaultValue={editingTutorial?.level || "beginner"}
+                    defaultValue={editingTutorial?.level || "Начинающий"}
                     required
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   >
-                    <option value="beginner">Beginner</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
+                    <option value="Начинающий">Начинающий</option>
+                    <option value="Средний">Средний</option>
+                    <option value="Продвинутый">Продвинутый</option>
                   </select>
                   <input
                     type="text"
