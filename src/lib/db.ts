@@ -1,4 +1,41 @@
-import { sql } from "@vercel/postgres";
+import { Pool } from "pg";
+
+// Create a connection pool
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+});
+
+// SQL template tag function
+async function sql<T = any>(
+  strings: TemplateStringsArray,
+  ...values: unknown[]
+): Promise<{ rows: T[] }> {
+  const client = await pool.connect();
+  try {
+    let query = strings[0];
+    for (let i = 0; i < values.length; i++) {
+      query += `$${i + 1}${strings[i + 1]}`;
+    }
+    const result = await client.query(query, values);
+    return { rows: result.rows as T[] };
+  } finally {
+    client.release();
+  }
+}
+
+// Add query method for dynamic queries
+sql.query = async function <T = any>(
+  queryText: string,
+  values: unknown[]
+): Promise<{ rows: T[] }> {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(queryText, values);
+    return { rows: result.rows as T[] };
+  } finally {
+    client.release();
+  }
+};
 
 export interface Tutorial {
   id: number;
