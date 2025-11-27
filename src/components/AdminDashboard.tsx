@@ -54,7 +54,7 @@ export default function AdminDashboard() {
       const res = await fetch("/api/tutorials");
       if (res.ok) {
         const data = await res.json();
-        setTutorials(data.tutorials || []);
+        setTutorials(Array.isArray(data) ? data : []);
       }
     } catch (err) {
       console.error("Failed to fetch tutorials:", err);
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
       const res = await fetch("/api/examples");
       if (res.ok) {
         const data = await res.json();
-        setExamples(data.examples || []);
+        setExamples(Array.isArray(data) ? data : []);
       }
     } catch (err) {
       console.error("Failed to fetch examples:", err);
