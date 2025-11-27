@@ -31,8 +31,11 @@ export default function AdminTutorials() {
       if (!response.ok) throw new Error("Failed to fetch tutorials");
       const data = await response.json();
       setTutorials(data);
+      setError(""); // Clear any previous errors
     } catch (err) {
+      // Don't treat database not initialized as a fatal error
       setError(err instanceof Error ? err.message : "Failed to load tutorials");
+      setTutorials([]); // Set empty array so UI still renders
     } finally {
       setLoading(false);
     }
@@ -98,16 +101,6 @@ export default function AdminTutorials() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-xl text-red-600 dark:text-red-400">
-          Ошибка: {error}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
@@ -131,6 +124,23 @@ export default function AdminTutorials() {
             </Link>
           </div>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 rounded-md bg-yellow-50 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">⚠️</span>
+              <div>
+                <p className="font-semibold">База данных не инициализирована</p>
+                <p className="text-sm">{error}</p>
+                <p className="text-sm mt-1">
+                  Нажмите кнопку &quot;Инициализировать БД&quot; выше для
+                  создания таблиц.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Init Message */}
         {initMessage && (
@@ -168,112 +178,128 @@ export default function AdminTutorials() {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {tutorials.map((tutorial) => (
-                <tr key={tutorial.id}>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {tutorial.title}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {tutorial.slug}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                    {tutorial.category}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                      {tutorial.level}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
-                    {tutorial.duration}
-                  </td>
-                  <td className="px-6 py-4 text-right text-sm font-medium">
-                    <Link
-                      href={`/admin/tutorials/${tutorial.id}/edit`}
-                      className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-4"
-                    >
-                      Редактировать
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(tutorial.id)}
-                      className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                    >
-                      Удалить
-                    </button>
+              {tutorials.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={5}
+                    className="px-6 py-12 text-center text-gray-500 dark:text-gray-400"
+                  >
+                    <div className="text-4xl mb-2">📚</div>
+                    <p>
+                      Нет уроков. Инициализируйте базу данных или добавьте новый
+                      урок.
+                    </p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                tutorials.map((tutorial) => (
+                  <tr key={tutorial.id}>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">
+                        {tutorial.title}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        {tutorial.slug}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {tutorial.category}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        {tutorial.level}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {tutorial.duration}
+                    </td>
+                    <td className="px-6 py-4 text-right text-sm font-medium">
+                      <Link
+                        href={`/admin/tutorials/${tutorial.id}/edit`}
+                        className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 mr-4"
+                      >
+                        Редактировать
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(tutorial.id)}
+                        className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
+                      >
+                        Удалить
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
 
         {/* Mobile Card View */}
         <div className="lg:hidden space-y-4">
-          {tutorials.map((tutorial) => (
-            <div
-              key={tutorial.id}
-              className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
-                    {tutorial.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    {tutorial.slug}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Категория:
-                  </span>
-                  <p className="text-gray-900 dark:text-white">
-                    {tutorial.category}
-                  </p>
-                </div>
-                <div>
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Длительность:
-                  </span>
-                  <p className="text-gray-900 dark:text-white">
-                    {tutorial.duration}
-                  </p>
-                </div>
-              </div>
-              <div className="mb-3">
-                <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                  {tutorial.level}
-                </span>
-              </div>
-              <div className="flex gap-2">
-                <Link
-                  href={`/admin/tutorials/${tutorial.id}/edit`}
-                  className="flex-1 px-3 py-2 text-center text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  Редактировать
-                </Link>
-                <button
-                  onClick={() => handleDelete(tutorial.id)}
-                  className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                >
-                  Удалить
-                </button>
-              </div>
+          {tutorials.length === 0 ? (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
+              <div className="text-4xl mb-2">📚</div>
+              <p className="text-gray-500 dark:text-gray-400">
+                Нет уроков. Инициализируйте базу данных или добавьте новый урок.
+              </p>
             </div>
-          ))}
+          ) : (
+            tutorials.map((tutorial) => (
+              <div
+                key={tutorial.id}
+                className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+                      {tutorial.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                      {tutorial.slug}
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 mb-3 text-sm">
+                  <div>
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Категория:
+                    </span>
+                    <p className="text-gray-900 dark:text-white">
+                      {tutorial.category}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 dark:text-gray-400">
+                      Длительность:
+                    </span>
+                    <p className="text-gray-900 dark:text-white">
+                      {tutorial.duration}
+                    </p>
+                  </div>
+                </div>
+                <div className="mb-3">
+                  <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    {tutorial.level}
+                  </span>
+                </div>
+                <div className="flex gap-2">
+                  <Link
+                    href={`/admin/tutorials/${tutorial.id}/edit`}
+                    className="flex-1 px-3 py-2 text-center text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Редактировать
+                  </Link>
+                  <button
+                    onClick={() => handleDelete(tutorial.id)}
+                    className="flex-1 px-3 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                  >
+                    Удалить
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-
-        {tutorials.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400 text-lg">
-              Нет уроков. Создайте первый урок!
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

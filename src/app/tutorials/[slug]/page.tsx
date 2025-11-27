@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTutorialBySlug, checkUserAccess } from "@/lib/db";
 import { auth } from "@/auth";
 import { Metadata } from "next";
+import MarkdownContent from "@/components/MarkdownContent";
 
 export const dynamic = "force-dynamic";
 
@@ -197,13 +198,7 @@ export default async function TutorialPage({
             )}
           </div>
         ) : (
-          <div className="prose prose-lg dark:prose-invert max-w-none">
-            <div
-              dangerouslySetInnerHTML={{
-                __html: tutorial.content.replace(/\n/g, "<br />"),
-              }}
-            />
-          </div>
+          <MarkdownContent content={tutorial.content} />
         )}
       </div>
 
