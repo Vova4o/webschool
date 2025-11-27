@@ -11,6 +11,8 @@ export default function UserNav() {
   }
 
   if (session?.user) {
+    const isAdmin = (session.user as any).role === "admin";
+    
     return (
       <div className="flex items-center gap-4">
         <div className="text-sm">
@@ -23,6 +25,14 @@ export default function UserNav() {
             </span>
           )}
         </div>
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className="text-sm px-3 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium"
+          >
+            Admin
+          </Link>
+        )}
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
           className="text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
