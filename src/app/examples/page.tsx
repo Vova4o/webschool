@@ -1,9 +1,25 @@
-"use client";
-
 import Link from "next/link";
+import { getExamples, Example } from "@/lib/db";
+import { Metadata } from "next";
 
-export default function Examples() {
-  const examples = [
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Go Code Examples | WebSchool",
+  description:
+    "Practical Go programming examples covering basics, data structures, concurrency, and more.",
+};
+
+export default async function Examples() {
+  let examples: Example[] = [];
+
+  try {
+    examples = await getExamples();
+  } catch (error) {
+    console.error("Failed to fetch examples:", error);
+  }
+
+  const fallbackExamples = [
     {
       title: "Привет, мир",
       description: "Простая программа Hello World для начала работы с Go.",
@@ -202,7 +218,11 @@ func main() {
     },
   ];
 
-  const categories = [...new Set(examples.map((example) => example.category))];
+  // Use database examples if available, fallback to hardcoded
+  const displayExamples = examples.length > 0 ? examples : fallbackExamples;
+  const categories = [
+    ...new Set(displayExamples.map((example) => example.category)),
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -234,7 +254,7 @@ func main() {
 
         {/* Examples Grid */}
         <div className="space-y-8">
-          {examples.map((example, index) => (
+          {displayExamples.map((example, index) => (
             <div
               key={index}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
@@ -271,14 +291,16 @@ func main() {
                 </div>
 
                 {/* Explanation */}
-                <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
-                  <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                    💡 Объяснение
-                  </h4>
-                  <p className="text-blue-800 dark:text-blue-200 text-sm">
-                    {example.explanation}
-                  </p>
-                </div>
+                {"explanation" in example && example.explanation && (
+                  <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                      💡 Объяснение
+                    </h4>
+                    <p className="text-blue-800 dark:text-blue-200 text-sm">
+                      {example.explanation}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           ))}

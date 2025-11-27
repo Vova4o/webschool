@@ -64,6 +64,19 @@ export interface User {
   updated_at: Date;
 }
 
+export interface Example {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+  code: string;
+  language: string;
+  category: string;
+  order: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
 export async function createTables() {
   // Users table
   await sql`
@@ -93,6 +106,22 @@ export async function createTables() {
       category VARCHAR(100) NOT NULL,
       "order" INTEGER DEFAULT 0,
       is_free BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+
+  // Examples table
+  await sql`
+    CREATE TABLE IF NOT EXISTS examples (
+      id SERIAL PRIMARY KEY,
+      slug VARCHAR(255) UNIQUE NOT NULL,
+      title VARCHAR(500) NOT NULL,
+      description TEXT,
+      code TEXT NOT NULL,
+      language VARCHAR(50) DEFAULT 'go',
+      category VARCHAR(100) NOT NULL,
+      "order" INTEGER DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
@@ -275,4 +304,105 @@ export async function checkUserAccess(
   }
 
   return false;
+}
+
+// ===== Examples CRUD Operations =====
+
+export async function getExamples(): Promise<Example[]> {
+  const { rows } = await sql<Example>`
+    SELECT * FROM examples ORDER BY "order" ASC, created_at DESC
+  `;
+  return rows;
+}
+
+export async function getExampleBySlug(slug: string): Promise<Example | null> {
+  const { rows } = await sql<Example>`
+    SELECT * FROM examples WHERE slug = ${slug}
+  `;
+  return rows[0] || null;
+}
+
+export async function getExampleById(id: number): Promise<Example | null> {
+  const { rows } = await sql<Example>`
+    SELECT * FROM examples WHERE id = ${id}
+  `;
+  return rows[0] || null;
+}
+
+export async function createExample(example: {
+  slug: string;
+  title: string;
+  description: string;
+  code: string;
+  language: string;
+  category: string;
+  order?: number;
+}): Promise<Example> {
+  const { rows } = await sql<Example>`
+    INSERT INTO examples (slug, title, description, code, language, category, "order")
+    VALUES (${example.slug}, ${example.title}, ${example.description}, ${
+    example.code
+  }, ${example.language}, ${example.category}, ${example.order || 0})
+    RETURNING *
+  `;
+  return rows[0];
+}
+
+export async function updateExample(
+  id: number,
+  example: {
+    slug?: string;
+    title?: string;
+    description?: string;
+    code?: string;
+    language?: string;
+    category?: string;
+    order?: number;
+  }
+): Promise<Example> {
+  const updates: string[] = [];
+  const values: unknown[] = [];
+  let paramIndex = 1;
+
+  if (example.slug !== undefined) {
+    updates.push(`slug = $${paramIndex++}`);
+    values.push(example.slug);
+  }
+  if (example.title !== undefined) {
+    updates.push(`title = $${paramIndex++}`);
+    values.push(example.title);
+  }
+  if (example.description !== undefined) {
+    updates.push(`description = $${paramIndex++}`);
+    values.push(example.description);
+  }
+  if (example.code !== undefined) {
+    updates.push(`code = $${paramIndex++}`);
+    values.push(example.code);
+  }
+  if (example.language !== undefined) {
+    updates.push(`language = $${paramIndex++}`);
+    values.push(example.language);
+  }
+  if (example.category !== undefined) {
+    updates.push(`category = $${paramIndex++}`);
+    values.push(example.category);
+  }
+  if (example.order !== undefined) {
+    updates.push(`"order" = $${paramIndex++}`);
+    values.push(example.order);
+  }
+
+  updates.push(`updated_at = CURRENT_TIMESTAMP`);
+  values.push(id);
+
+  const query = `UPDATE examples SET ${updates.join(
+    ", "
+  )} WHERE id = $${paramIndex} RETURNING *`;
+  const { rows } = await sql.query<Example>(query, values);
+  return rows[0];
+}
+
+export async function deleteExample(id: number): Promise<void> {
+  await sql`DELETE FROM examples WHERE id = ${id}`;
 }

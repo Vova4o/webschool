@@ -1,4 +1,4 @@
-import { createTutorialsTable, createTutorial } from "@/lib/db";
+import { createTutorialsTable, createTutorial, createExample } from "@/lib/db";
 
 const tutorialsData = [
   {
@@ -206,6 +206,62 @@ export async function seedDatabase() {
         const err = error as { code?: string; message?: string };
         if (err?.code === "23505" || err?.message?.includes("duplicate")) {
           console.log(`Tutorial already exists: ${tutorial.title} - skipping`);
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    // Seed examples
+    const examplesData = [
+      {
+        slug: "hello-world",
+        title: "Привет, мир",
+        description: "Простая программа Hello World для начала работы с Go.",
+        code: `package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Привет, мир!")
+}`,
+        language: "go",
+        category: "Основы",
+        order: 1,
+      },
+      {
+        slug: "variables",
+        title: "Переменные и константы",
+        description: "Работа с различными типами переменных и констант в Go.",
+        code: `package main
+
+import "fmt"
+
+func main() {
+    // Объявление переменных
+    var name string = "Golang"
+    age := 13  // Короткая форма
+    
+    // Константы
+    const pi = 3.14159
+    
+    fmt.Printf("Язык: %s, Возраст: %d лет\\n", name, age)
+    fmt.Printf("Pi = %.2f\\n", pi)
+}`,
+        language: "go",
+        category: "Основы",
+        order: 2,
+      },
+    ];
+
+    for (const example of examplesData) {
+      try {
+        await createExample(example);
+        console.log(`Created example: ${example.title}`);
+      } catch (error) {
+        const err = error as { code?: string; message?: string };
+        if (err?.code === "23505" || err?.message?.includes("duplicate")) {
+          console.log(`Example already exists: ${example.title} - skipping`);
         } else {
           throw error;
         }
