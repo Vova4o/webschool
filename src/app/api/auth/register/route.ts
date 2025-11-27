@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { createUser, getUserByEmail, getUserCount } from "@/lib/db";
+import { ensureDatabaseReady } from "@/lib/migrations";
 
 export async function POST(request: NextRequest) {
   try {
+    // Ensure database tables exist before registration
+    await ensureDatabaseReady();
+
     const { name, email, password } = await request.json();
 
     // Validate input
@@ -50,7 +54,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         message: isFirstUser
-          ? "Congratulations! You're the first user and have been granted admin access. Go to /admin to manage the site."
+          ? "Congratulations! You're the first user and have been granted admin access. Login and go to /admin to initialize the database with content."
           : "User created successfully",
         user: {
           id: user.id,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateTutorial, deleteTutorial } from "@/lib/db";
+import { requireAdmin } from "@/lib/auth-helpers";
 
 interface Params {
   params: Promise<{
@@ -9,6 +10,8 @@ interface Params {
 
 export async function PUT(request: NextRequest, { params }: Params) {
   try {
+    await requireAdmin(request);
+
     const { id } = await params;
     const tutorialId = parseInt(id, 10);
 
@@ -24,6 +27,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
     return NextResponse.json(tutorial);
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     console.error("Error updating tutorial:", error);
     return NextResponse.json(
       { error: "Failed to update tutorial" },
@@ -34,6 +40,8 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
+    await requireAdmin(request);
+
     const { id } = await params;
     const tutorialId = parseInt(id, 10);
 
@@ -48,6 +56,9 @@ export async function DELETE(request: NextRequest, { params }: Params) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error instanceof Error && error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     console.error("Error deleting tutorial:", error);
     return NextResponse.json(
       { error: "Failed to delete tutorial" },

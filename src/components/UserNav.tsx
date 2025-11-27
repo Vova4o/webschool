@@ -12,7 +12,7 @@ export default function UserNav() {
 
   if (session?.user) {
     const isAdmin = (session.user as any).role === "admin";
-    
+
     return (
       <div className="flex items-center gap-4">
         <div className="text-sm">

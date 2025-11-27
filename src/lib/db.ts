@@ -5,38 +5,6 @@ const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
 });
 
-// SQL template tag function
-async function sql<T = any>(
-  strings: TemplateStringsArray,
-  ...values: unknown[]
-): Promise<{ rows: T[] }> {
-  const client = await pool.connect();
-  try {
-    let query = strings[0];
-    for (let i = 0; i < values.length; i++) {
-      query += `$${i + 1}${strings[i + 1]}`;
-    }
-    const result = await client.query(query, values);
-    return { rows: result.rows as T[] };
-  } finally {
-    client.release();
-  }
-}
-
-// Add query method for dynamic queries
-sql.query = async function <T = any>(
-  queryText: string,
-  values: unknown[]
-): Promise<{ rows: T[] }> {
-  const client = await pool.connect();
-  try {
-    const result = await client.query(queryText, values);
-    return { rows: result.rows as T[] };
-  } finally {
-    client.release();
-  }
-};
-
 export interface Tutorial {
   id: number;
   slug: string;
@@ -79,7 +47,7 @@ export interface Example {
 
 export async function createTables() {
   // Users table
-  await sql`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       email VARCHAR(255) UNIQUE NOT NULL,
@@ -91,10 +59,10 @@ export async function createTables() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-  `;
+  `);
 
   // Tutorials table
-  await sql`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS tutorials (
       id SERIAL PRIMARY KEY,
       slug VARCHAR(255) UNIQUE NOT NULL,
@@ -109,10 +77,10 @@ export async function createTables() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-  `;
+  `);
 
   // Examples table
-  await sql`
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS examples (
       id SERIAL PRIMARY KEY,
       slug VARCHAR(255) UNIQUE NOT NULL,
@@ -125,7 +93,7 @@ export async function createTables() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
-  `;
+  `);
 }
 
 // Deprecated - use createTables instead
@@ -134,34 +102,39 @@ export async function createTutorialsTable() {
 }
 
 export async function getTutorials(): Promise<Tutorial[]> {
-  const { rows } = await sql<Tutorial>`
-    SELECT * FROM tutorials 
-    ORDER BY category, "order", created_at
-  `;
-  return rows;
+  const result = await pool.query<Tutorial>(
+    'SELECT * FROM tutorials ORDER BY category, "order", created_at'
+  );
+  return result.rows;
 }
 
 export async function getTutorialBySlug(
   slug: string
 ): Promise<Tutorial | null> {
-  const { rows } = await sql<Tutorial>`
-    SELECT * FROM tutorials 
-    WHERE slug = ${slug}
-    LIMIT 1
-  `;
-  return rows[0] || null;
+  const result = await pool.query<Tutorial>(
+    "SELECT * FROM tutorials WHERE slug = $1 LIMIT 1",
+    [slug]
+  );
+  return result.rows[0] || null;
 }
 
 export async function createTutorial(
   tutorial: Omit<Tutorial, "id" | "created_at" | "updated_at">
 ): Promise<Tutorial> {
-  const { rows } = await sql<Tutorial>`
-    INSERT INTO tutorials (slug, title, description, level, duration, content, category, "order")
-    VALUES (${tutorial.slug}, ${tutorial.title}, ${tutorial.description}, ${tutorial.level}, 
-            ${tutorial.duration}, ${tutorial.content}, ${tutorial.category}, ${tutorial.order})
-    RETURNING *
-  `;
-  return rows[0];
+  const result = await pool.query<Tutorial>(
+    'INSERT INTO tutorials (slug, title, description, level, duration, content, category, "order") VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+    [
+      tutorial.slug,
+      tutorial.title,
+      tutorial.description,
+      tutorial.level,
+      tutorial.duration,
+      tutorial.content,
+      tutorial.category,
+      tutorial.order,
+    ]
+  );
+  return result.rows[0];
 }
 
 export async function updateTutorial(
@@ -215,12 +188,12 @@ export async function updateTutorial(
     RETURNING *
   `;
 
-  const { rows } = await sql.query<Tutorial>(query, values);
-  return rows[0];
+  const result = await pool.query<Tutorial>(query, values);
+  return result.rows[0];
 }
 
 export async function deleteTutorial(id: number): Promise<void> {
-  await sql`DELETE FROM tutorials WHERE id = ${id}`;
+  await pool.query("DELETE FROM tutorials WHERE id = $1", [id]);
 }
 
 // ==================== User Management ====================
@@ -228,40 +201,41 @@ export async function deleteTutorial(id: number): Promise<void> {
 export async function createUser(
   user: Omit<User, "id" | "created_at" | "updated_at">
 ): Promise<User> {
-  const { rows } = await sql<User>`
-    INSERT INTO users (email, password_hash, name, role, is_premium, premium_until)
-    VALUES (${user.email}, ${user.password_hash}, ${user.name}, ${user.role}, 
-            ${user.is_premium}, ${
-    user.premium_until ? user.premium_until.toISOString() : null
-  })
-    RETURNING *
-  `;
-  return rows[0];
+  const result = await pool.query<User>(
+    "INSERT INTO users (email, password_hash, name, role, is_premium, premium_until) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+    [
+      user.email,
+      user.password_hash,
+      user.name,
+      user.role,
+      user.is_premium,
+      user.premium_until ? user.premium_until.toISOString() : null,
+    ]
+  );
+  return result.rows[0];
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
-  const { rows } = await sql<User>`
-    SELECT * FROM users 
-    WHERE email = ${email}
-    LIMIT 1
-  `;
-  return rows[0] || null;
+  const result = await pool.query<User>(
+    "SELECT * FROM users WHERE email = $1 LIMIT 1",
+    [email]
+  );
+  return result.rows[0] || null;
 }
 
 export async function getUserCount(): Promise<number> {
-  const { rows } = await sql<{ count: string }>`
-    SELECT COUNT(*) as count FROM users
-  `;
-  return parseInt(rows[0]?.count || "0", 10);
+  const result = await pool.query<{ count: string }>(
+    "SELECT COUNT(*) as count FROM users"
+  );
+  return parseInt(result.rows[0]?.count || "0", 10);
 }
 
 export async function getUserById(id: number): Promise<User | null> {
-  const { rows } = await sql<User>`
-    SELECT * FROM users 
-    WHERE id = ${id}
-    LIMIT 1
-  `;
-  return rows[0] || null;
+  const result = await pool.query<User>(
+    "SELECT * FROM users WHERE id = $1 LIMIT 1",
+    [id]
+  );
+  return result.rows[0] || null;
 }
 
 export async function updateUserPremiumStatus(
@@ -269,15 +243,11 @@ export async function updateUserPremiumStatus(
   isPremium: boolean,
   premiumUntil: Date | null
 ): Promise<User> {
-  const { rows } = await sql<User>`
-    UPDATE users 
-    SET is_premium = ${isPremium}, 
-        premium_until = ${premiumUntil ? premiumUntil.toISOString() : null},
-        updated_at = CURRENT_TIMESTAMP
-    WHERE id = ${userId}
-    RETURNING *
-  `;
-  return rows[0];
+  const result = await pool.query<User>(
+    "UPDATE users SET is_premium = $1, premium_until = $2, updated_at = CURRENT_TIMESTAMP WHERE id = $3 RETURNING *",
+    [isPremium, premiumUntil ? premiumUntil.toISOString() : null, userId]
+  );
+  return result.rows[0];
 }
 
 export async function checkUserAccess(
@@ -285,14 +255,15 @@ export async function checkUserAccess(
   tutorialId: number
 ): Promise<boolean> {
   // Get tutorial
-  const { rows: tutorialRows } = await sql<Tutorial>`
-    SELECT is_free FROM tutorials WHERE id = ${tutorialId}
-  `;
+  const tutorialResult = await pool.query<Tutorial>(
+    "SELECT is_free FROM tutorials WHERE id = $1",
+    [tutorialId]
+  );
 
-  if (!tutorialRows[0]) return false;
+  if (!tutorialResult.rows[0]) return false;
 
   // If tutorial is free, everyone can access
-  if (tutorialRows[0].is_free) return true;
+  if (tutorialResult.rows[0].is_free) return true;
 
   // If not logged in, no access to premium
   if (!userId) return false;
@@ -316,24 +287,26 @@ export async function checkUserAccess(
 // ===== Examples CRUD Operations =====
 
 export async function getExamples(): Promise<Example[]> {
-  const { rows } = await sql<Example>`
-    SELECT * FROM examples ORDER BY "order" ASC, created_at DESC
-  `;
-  return rows;
+  const result = await pool.query<Example>(
+    'SELECT * FROM examples ORDER BY "order" ASC, created_at DESC'
+  );
+  return result.rows;
 }
 
 export async function getExampleBySlug(slug: string): Promise<Example | null> {
-  const { rows } = await sql<Example>`
-    SELECT * FROM examples WHERE slug = ${slug}
-  `;
-  return rows[0] || null;
+  const result = await pool.query<Example>(
+    "SELECT * FROM examples WHERE slug = $1",
+    [slug]
+  );
+  return result.rows[0] || null;
 }
 
 export async function getExampleById(id: number): Promise<Example | null> {
-  const { rows } = await sql<Example>`
-    SELECT * FROM examples WHERE id = ${id}
-  `;
-  return rows[0] || null;
+  const result = await pool.query<Example>(
+    "SELECT * FROM examples WHERE id = $1",
+    [id]
+  );
+  return result.rows[0] || null;
 }
 
 export async function createExample(example: {
@@ -345,14 +318,19 @@ export async function createExample(example: {
   category: string;
   order?: number;
 }): Promise<Example> {
-  const { rows } = await sql<Example>`
-    INSERT INTO examples (slug, title, description, code, language, category, "order")
-    VALUES (${example.slug}, ${example.title}, ${example.description}, ${
-    example.code
-  }, ${example.language}, ${example.category}, ${example.order || 0})
-    RETURNING *
-  `;
-  return rows[0];
+  const result = await pool.query<Example>(
+    'INSERT INTO examples (slug, title, description, code, language, category, "order") VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+    [
+      example.slug,
+      example.title,
+      example.description,
+      example.code,
+      example.language,
+      example.category,
+      example.order || 0,
+    ]
+  );
+  return result.rows[0];
 }
 
 export async function updateExample(
@@ -406,10 +384,10 @@ export async function updateExample(
   const query = `UPDATE examples SET ${updates.join(
     ", "
   )} WHERE id = $${paramIndex} RETURNING *`;
-  const { rows } = await sql.query<Example>(query, values);
-  return rows[0];
+  const result = await pool.query<Example>(query, values);
+  return result.rows[0];
 }
 
 export async function deleteExample(id: number): Promise<void> {
-  await sql`DELETE FROM examples WHERE id = ${id}`;
+  await pool.query("DELETE FROM examples WHERE id = $1", [id]);
 }

@@ -1,9 +1,5 @@
-import {
-  createTutorialsTable,
-  createTutorial,
-  createExample,
-  createUser,
-} from "@/lib/db";
+import { createTutorial, createExample, createUser } from "@/lib/db";
+import { runMigrations } from "@/lib/migrations";
 import bcrypt from "bcryptjs";
 
 const tutorialsData = [
@@ -198,12 +194,14 @@ Go автоматически инициализирует переменные 
 ];
 
 export async function seedDatabase() {
-  try {
-    console.log("Creating tutorials table...");
-    await createTutorialsTable();
+  console.log("🌱 Starting database seeding...");
 
-    // Create admin user
-    console.log("Creating admin user...");
+  try {
+    // Step 1: Ensure all tables exist
+    await runMigrations();
+
+    // Step 2: Create admin user
+    console.log("👤 Creating admin user...");
     try {
       const adminPassword = await bcrypt.hash("admin123", 10);
       await createUser({
@@ -214,33 +212,37 @@ export async function seedDatabase() {
         is_premium: true,
         premium_until: null,
       });
-      console.log("Admin user created: admin@webschool.com / admin123");
+      console.log("✅ Admin user created: admin@webschool.com / admin123");
     } catch (error) {
       const err = error as { code?: string; message?: string };
       if (err?.code === "23505" || err?.message?.includes("duplicate")) {
-        console.log("Admin user already exists - skipping");
+        console.log("ℹ️  Admin user already exists - skipping");
       } else {
         throw error;
       }
     }
 
-    console.log("Seeding tutorials...");
+    // Step 3: Seed tutorials
+    console.log("📚 Seeding tutorials...");
     for (const tutorial of tutorialsData) {
       try {
         await createTutorial(tutorial);
-        console.log(`Created tutorial: ${tutorial.title}`);
+        console.log(`✅ Created tutorial: ${tutorial.title}`);
       } catch (error) {
         // Skip if tutorial already exists (duplicate slug)
         const err = error as { code?: string; message?: string };
         if (err?.code === "23505" || err?.message?.includes("duplicate")) {
-          console.log(`Tutorial already exists: ${tutorial.title} - skipping`);
+          console.log(
+            `ℹ️  Tutorial already exists: ${tutorial.title} - skipping`
+          );
         } else {
           throw error;
         }
       }
     }
 
-    // Seed examples
+    // Step 4: Seed examples
+    console.log("💻 Seeding examples...");
     const examplesData = [
       {
         slug: "hello-world",
@@ -285,20 +287,22 @@ func main() {
     for (const example of examplesData) {
       try {
         await createExample(example);
-        console.log(`Created example: ${example.title}`);
+        console.log(`✅ Created example: ${example.title}`);
       } catch (error) {
         const err = error as { code?: string; message?: string };
         if (err?.code === "23505" || err?.message?.includes("duplicate")) {
-          console.log(`Example already exists: ${example.title} - skipping`);
+          console.log(
+            `ℹ️  Example already exists: ${example.title} - skipping`
+          );
         } else {
           throw error;
         }
       }
     }
 
-    console.log("Database seeded successfully!");
+    console.log("🎉 Database seeding complete!");
   } catch (error) {
-    console.error("Error seeding database:", error);
+    console.error("❌ Database seeding failed:", error);
     throw error;
   }
 }
