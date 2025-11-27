@@ -1,6 +1,6 @@
-import AdminDashboard from "@/components/AdminDashboard";
+"use client";
 
-export const dynamic = "force-dynamic";
+import AdminDashboard from "@/components/AdminDashboard";
 
 // Middleware handles authentication, so this page is only accessible to admins
 export default function AdminPage() {
