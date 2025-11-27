@@ -380,14 +380,17 @@ export default function AdminDashboard() {
                     required
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
-                  <input
-                    type="text"
+                  <select
                     name="category"
-                    placeholder="Category"
-                    defaultValue={editingTutorial?.category}
+                    defaultValue={editingTutorial?.category || "basics"}
                     required
                     className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  />
+                  >
+                    <option value="basics">Basics (Основы Go)</option>
+                    <option value="advanced">
+                      Advanced (Продвинутые темы)
+                    </option>
+                  </select>
                   <select
                     name="level"
                     defaultValue={editingTutorial?.level || "beginner"}
