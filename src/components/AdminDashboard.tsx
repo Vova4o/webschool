@@ -39,7 +39,6 @@ export default function AdminDashboard() {
   const [editingExample, setEditingExample] = useState<Example | null>(null);
   const [showTutorialForm, setShowTutorialForm] = useState(false);
   const [showExampleForm, setShowExampleForm] = useState(false);
-  const [showAdminInfo, setShowAdminInfo] = useState(true);
 
   // Fetch data when tab changes
   useEffect(() => {
@@ -258,35 +257,6 @@ export default function AdminDashboard() {
             Manage your tutorials, examples, and database
           </p>
         </div>
-
-        {/* Admin Credentials Info Banner */}
-        {showAdminInfo && (
-          <div className="mb-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                  📝 Default Admin Credentials
-                </h3>
-                <p className="text-sm text-blue-800 dark:text-blue-200 mb-1">
-                  <strong>Email:</strong> admin@webschool.com
-                </p>
-                <p className="text-sm text-blue-800 dark:text-blue-200 mb-2">
-                  <strong>Password:</strong> admin123
-                </p>
-                <p className="text-xs text-blue-700 dark:text-blue-300">
-                  💡 After first login, create a new admin user and delete the
-                  default one for security.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowAdminInfo(false)}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 text-xl leading-none"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Tabs */}
         <div className="mb-6 border-b border-gray-200 dark:border-gray-700">

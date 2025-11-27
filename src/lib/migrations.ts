@@ -71,7 +71,7 @@ async function createExamplesTable(): Promise<void> {
       title VARCHAR(255) NOT NULL,
       description TEXT NOT NULL,
       code TEXT NOT NULL,
-      explanation TEXT,
+      language VARCHAR(50) DEFAULT 'go',
       category VARCHAR(100) NOT NULL,
       "order" INTEGER NOT NULL DEFAULT 0,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
