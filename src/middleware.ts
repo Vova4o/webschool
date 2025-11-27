@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
 
     // Check if user is logged in
     if (!token) {
-      const signInUrl = new URL("/auth/signin", request.url);
+      const signInUrl = new URL("/auth/login", request.url);
       signInUrl.searchParams.set("callbackUrl", request.nextUrl.pathname);
       return NextResponse.redirect(signInUrl);
     }
