@@ -131,45 +131,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        {/* Getting Started Section */}
-        <div className="mt-16 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            Готовы начать своё путешествие в Go?
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                🚀 Для начинающих
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Начните с нашего введения в программирование на Go, включая
-                установку, базовый синтаксис и вашу первую программу.
-              </p>
-              <Link
-                href="/tutorials/basics"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
-              >
-                Начать урок →
-              </Link>
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                📚 Продвинутые темы
-              </h4>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Углубитесь в параллелизм, интерфейсы, обработку ошибок и
-                продвинутые паттерны Go для опытных разработчиков.
-              </p>
-              <Link
-                href="/tutorials/advanced"
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-600 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:hover:bg-blue-800"
-              >
-                Изучить продвинутое →
-              </Link>
-            </div>
-          </div>
-        </div>
       </main>
 
       {/* Footer */}
