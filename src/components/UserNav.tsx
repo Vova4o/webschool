@@ -7,7 +7,12 @@ export default function UserNav() {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <div className="text-sm">Loading...</div>;
+    return (
+      <div className="flex items-center gap-4">
+        <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
+        <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
+      </div>
+    );
   }
 
   if (session?.user) {
