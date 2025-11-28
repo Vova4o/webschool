@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 type Tab = "tutorials" | "examples" | "database";
 
@@ -31,6 +31,12 @@ interface Example {
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<Tab>("tutorials");
   const [tutorials, setTutorials] = useState<Tutorial[]>([]);
+  const [tutorialSortKey, setTutorialSortKey] = useState<
+    "title" | "category" | "level" | "is_free" | "order"
+  >("order");
+  const [tutorialSortDirection, setTutorialSortDirection] = useState<
+    "asc" | "desc"
+  >("asc");
   const [examples, setExamples] = useState<Example[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -71,6 +77,69 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error("Failed to fetch examples:", err);
     }
+  };
+
+  const sortedTutorials = useMemo(() => {
+    const sorted = [...tutorials];
+    const direction = tutorialSortDirection === "asc" ? 1 : -1;
+
+    sorted.sort((a, b) => {
+      let result = 0;
+
+      switch (tutorialSortKey) {
+        case "title":
+          result = a.title.localeCompare(b.title, "ru");
+          break;
+        case "category":
+          result = a.category.localeCompare(b.category, "ru");
+          break;
+        case "level":
+          result = a.level.localeCompare(b.level, "ru");
+          break;
+        case "is_free":
+          if (a.is_free === b.is_free) {
+            result = 0;
+          } else {
+            result = a.is_free ? -1 : 1;
+          }
+          break;
+        case "order":
+        default:
+          result = (a.order ?? 0) - (b.order ?? 0);
+          if (result === 0) {
+            result = a.category.localeCompare(b.category, "ru");
+          }
+          break;
+      }
+
+      if (result === 0) {
+        result = a.title.localeCompare(b.title, "ru");
+      }
+
+      return result * direction;
+    });
+
+    return sorted;
+  }, [tutorials, tutorialSortDirection, tutorialSortKey]);
+
+  const handleTutorialSort = (
+    key: "title" | "category" | "level" | "is_free" | "order"
+  ) => {
+    if (tutorialSortKey === key) {
+      setTutorialSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setTutorialSortKey(key);
+      setTutorialSortDirection("asc");
+    }
+  };
+
+  const getTutorialSortIndicator = (
+    key: "title" | "category" | "level" | "is_free" | "order"
+  ) => {
+    if (tutorialSortKey !== key) {
+      return null;
+    }
+    return tutorialSortDirection === "asc" ? "↑" : "↓";
   };
 
   const handleInitDatabase = async () => {
@@ -443,16 +512,54 @@ export default function AdminDashboard() {
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Title
+                      <button
+                        type="button"
+                        onClick={() => handleTutorialSort("title")}
+                        className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        Title
+                        <span>{getTutorialSortIndicator("title")}</span>
+                      </button>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Category
+                      <button
+                        type="button"
+                        onClick={() => handleTutorialSort("category")}
+                        className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        Category
+                        <span>{getTutorialSortIndicator("category")}</span>
+                      </button>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Level
+                      <button
+                        type="button"
+                        onClick={() => handleTutorialSort("order")}
+                        className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        Order
+                        <span>{getTutorialSortIndicator("order")}</span>
+                      </button>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Type
+                      <button
+                        type="button"
+                        onClick={() => handleTutorialSort("level")}
+                        className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        Level
+                        <span>{getTutorialSortIndicator("level")}</span>
+                      </button>
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      <button
+                        type="button"
+                        onClick={() => handleTutorialSort("is_free")}
+                        className="flex items-center gap-1 hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        Type
+                        <span>{getTutorialSortIndicator("is_free")}</span>
+                      </button>
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                       Actions
@@ -460,13 +567,16 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {tutorials.map((tutorial) => (
+                  {sortedTutorials.map((tutorial) => (
                     <tr key={tutorial.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                         {tutorial.title}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {tutorial.category}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {tutorial.order ?? "—"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {tutorial.level}

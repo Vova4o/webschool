@@ -118,6 +118,17 @@ export async function getTutorialBySlug(
   return result.rows[0] || null;
 }
 
+export async function getNextTutorialInCategory(
+  category: string,
+  order: number
+): Promise<Tutorial | null> {
+  const result = await pool.query<Tutorial>(
+    'SELECT * FROM tutorials WHERE category = $1 AND "order" > $2 ORDER BY "order" ASC, created_at ASC LIMIT 1',
+    [category, order]
+  );
+  return result.rows[0] || null;
+}
+
 export async function createTutorial(
   tutorial: Omit<Tutorial, "id" | "created_at" | "updated_at">
 ): Promise<Tutorial> {

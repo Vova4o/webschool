@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTutorialBySlug, checkUserAccess } from "@/lib/db";
+import {
+  getTutorialBySlug,
+  checkUserAccess,
+  getNextTutorialInCategory,
+} from "@/lib/db";
+import type { Tutorial } from "@/lib/db";
 import { auth } from "@/auth";
 import { Metadata } from "next";
 import MarkdownContent from "@/components/MarkdownContent";
@@ -46,7 +51,8 @@ export default async function TutorialPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  let tutorial;
+  let tutorial: Tutorial | null = null;
+  let nextTutorial: Tutorial | null = null;
 
   try {
     tutorial = await getTutorialBySlug(slug);
@@ -56,6 +62,15 @@ export default async function TutorialPage({
 
   if (!tutorial) {
     notFound();
+  }
+
+  try {
+    nextTutorial = await getNextTutorialInCategory(
+      tutorial.category,
+      tutorial.order || 0
+    );
+  } catch (error) {
+    console.error("Error fetching next tutorial:", error);
   }
 
   // Check if user has access to this tutorial
@@ -225,6 +240,27 @@ export default async function TutorialPage({
               </svg>
               Все уроки
             </Link>
+            {nextTutorial && (
+              <Link
+                href={`/tutorials/${nextTutorial.slug}`}
+                className="inline-flex items-center px-4 py-2 border border-blue-600 dark:border-blue-500 rounded-md text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/40 hover:bg-blue-100 dark:hover:bg-blue-900/60"
+              >
+                Следующий урок
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </Link>
+            )}
           </div>
         </div>
       )}
