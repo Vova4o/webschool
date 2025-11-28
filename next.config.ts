@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   // Enable standalone output for Docker
   output: "standalone",
 
+  experimental: {
+    optimizePackageImports: ["react", "react-dom"],
+    optimizeCss: true,
+  },
+
   // Allow ACME challenge requests to pass through
   async headers() {
     return [

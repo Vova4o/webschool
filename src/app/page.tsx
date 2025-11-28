@@ -1,48 +1,44 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="font-sans min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900 relative">
-      {/* Go Mascot in bottom right corner */}
-      <div className="fixed bottom-2 right-2 sm:bottom-4 sm:right-4 opacity-30 pointer-events-none z-10">
-        <Image
-          src="/gopherdrink-3547479203.png"
-          alt="Go Mascot с напитком"
-          width={80}
-          height={80}
-          className="transform -rotate-12 sm:w-[120px] sm:h-[120px]"
-        />
-      </div>
-
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <div className="text-center relative">
-          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl relative z-10 leading-tight">
-            Изучайте программирование на Go
-          </h2>
-          <p className="mt-3 max-w-md mx-auto text-sm text-gray-500 dark:text-gray-400 sm:text-base md:text-lg md:mt-5 lg:text-xl md:max-w-3xl relative z-10">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
+      <main className="relative overflow-hidden pt-16 pb-24 sm:pt-24 sm:pb-32">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="relative inline-flex items-center justify-center mb-8">
+            <div className="absolute -top-6 -right-10 hidden sm:block">
+              <Image
+                src="/gopherdrink-3547479203.png"
+                alt="Go Mascot с напитком"
+                width={120}
+                height={120}
+                className="transform -rotate-12 drop-shadow-lg"
+                priority
+              />
+            </div>
+            <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white sm:text-4xl md:text-5xl lg:text-6xl leading-tight">
+              Изучайте программирование на Go
+            </h1>
+          </div>
+          <p className="mt-3 max-w-2xl mx-auto text-sm text-gray-500 dark:text-gray-400 sm:text-base md:text-lg md:mt-5 lg:text-xl">
             Освойте язык программирования Go с помощью наших комплексных уроков,
             примеров и практических упражнений. От основ до продвинутых
             концепций — мы проведём вас через всё путешествие изучения Go.
           </p>
-          <div className="mt-5 max-w-md mx-auto flex flex-col sm:flex-row sm:justify-center md:mt-8 gap-3 sm:gap-0">
-            <div className="rounded-md shadow w-full sm:w-auto">
-              <Link
-                href="/tutorials"
-                className="w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors sm:py-4 md:text-lg md:px-10"
-              >
-                Начать обучение
-              </Link>
-            </div>
-            <div className="rounded-md shadow sm:ml-3 w-full sm:w-auto">
-              <Link
-                href="/examples"
-                className="w-full flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors sm:py-4 md:text-lg md:px-10"
-              >
-                Смотреть примеры
-              </Link>
-            </div>
+          <div className="mt-8 flex flex-col sm:flex-row sm:justify-center gap-3">
+            <Link
+              href="/tutorials"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors sm:py-4 md:text-lg md:px-10"
+            >
+              Начать обучение
+            </Link>
+            <Link
+              href="/examples"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-gray-300 dark:border-gray-600 text-base font-medium rounded-md text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors sm:py-4 md:text-lg md:px-10"
+            >
+              Смотреть примеры
+            </Link>
           </div>
         </div>
 
@@ -146,19 +142,19 @@ export default function Home() {
                   Изучаем! Повторяем!
                 </span>
               </div>
-              <p className="mt-4 text-gray-600 dark:text-gray-400">
+              <p className="mt-4 text-gray-600 dark:text-gray-200">
                 Ваш комплексный ресурс для изучения языка программирования Go.
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-400 dark:text-gray-300 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
                 Обучающие ресурсы
               </h3>
               <ul className="mt-4 space-y-4">
                 <li>
                   <Link
                     href="/tutorials"
-                    className="text-base text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    className="text-base text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                   >
                     Уроки
                   </Link>
@@ -166,7 +162,7 @@ export default function Home() {
                 <li>
                   <Link
                     href="/examples"
-                    className="text-base text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    className="text-base text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                   >
                     Примеры кода
                   </Link>
@@ -174,7 +170,7 @@ export default function Home() {
                 <li>
                   <Link
                     href="/reference"
-                    className="text-base text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    className="text-base text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                   >
                     Справочник
                   </Link>
@@ -182,7 +178,7 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-gray-400 dark:text-gray-300 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-100 uppercase tracking-wider">
                 Быстрые ссылки
               </h3>
               <ul className="mt-4 space-y-4">
@@ -191,7 +187,7 @@ export default function Home() {
                     href="https://golang.org/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    className="text-base text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                   >
                     Официальный сайт Go
                   </a>
@@ -201,7 +197,7 @@ export default function Home() {
                     href="https://pkg.go.dev/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    className="text-base text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                   >
                     Пакеты Go
                   </a>
@@ -211,7 +207,7 @@ export default function Home() {
                     href="https://play.golang.org/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    className="text-base text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                   >
                     Go Playground
                   </a>
@@ -220,7 +216,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
-            <p className="text-base text-gray-400 dark:text-gray-500 text-center">
+            <p className="text-base text-gray-600 dark:text-gray-300 text-center">
               © 2025 Go Изучаем! Повторяем!. Создано с помощью Next.js и
               Tailwind CSS.
             </p>
