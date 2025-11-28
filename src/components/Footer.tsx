@@ -89,8 +89,8 @@ export default function Footer() {
         </div>
         <div className="mt-8 border-t border-gray-200 dark:border-gray-700 pt-8">
           <p className="text-base text-gray-600 dark:text-gray-300 text-center">
-            © 2025 Go Изучаем! Повторяем!. Создано с помощью Next.js и
-            Tailwind CSS.
+            © 2025 Go Изучаем! Повторяем!. Создано с помощью Next.js и Tailwind
+            CSS.
           </p>
         </div>
       </div>
