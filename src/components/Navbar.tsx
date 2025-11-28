@@ -1,11 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UserNav from "./UserNav";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Prevent hydration mismatch by only showing interactive elements after mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm">
@@ -57,7 +63,8 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
-              aria-expanded="false"
+              aria-expanded={isOpen}
+              suppressHydrationWarning
             >
               <span className="sr-only">Открыть главное меню</span>
               {/* Hamburger icon */}
@@ -97,7 +104,10 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Navigation Menu */}
-        <div className={`${isOpen ? "block" : "hidden"} md:hidden`}>
+        <div
+          className={`${isOpen ? "block" : "hidden"} md:hidden`}
+          suppressHydrationWarning
+        >
           <div className="px-2 pt-2 pb-3 space-y-1 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <Link
               href="/"
