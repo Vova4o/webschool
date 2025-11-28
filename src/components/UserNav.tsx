@@ -2,15 +2,32 @@
 
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function UserNav() {
   const { data: session, status } = useSession();
+  const [mounted, setMounted] = useState(false);
 
-  if (status === "loading") {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Show default buttons immediately, update after mount
+  if (!mounted || status === "loading") {
     return (
       <div className="flex items-center gap-4">
-        <div className="h-8 w-16 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
-        <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded"></div>
+        <Link
+          href="/auth/login"
+          className="text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+        >
+          Sign in
+        </Link>
+        <Link
+          href="/auth/register"
+          className="text-sm px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Sign up
+        </Link>
       </div>
     );
   }
