@@ -1,17 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import UserNav from "./UserNav";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch by only showing interactive elements after mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm">
