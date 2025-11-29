@@ -16,10 +16,11 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
         .markdown-content {
           max-width: none;
           line-height: 1.75;
+          font-size: 1.1rem;
         }
 
         .markdown-content h1 {
-          font-size: 2.25rem;
+          font-size: 2.475rem;
           font-weight: 700;
           margin-top: 2rem;
           margin-bottom: 1.5rem;
@@ -27,7 +28,7 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
         }
 
         .markdown-content h2 {
-          font-size: 1.875rem;
+          font-size: 2.0625rem;
           font-weight: 700;
           margin-top: 2rem;
           margin-bottom: 1rem;
@@ -37,7 +38,7 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
         }
 
         .markdown-content h3 {
-          font-size: 1.5rem;
+          font-size: 1.65rem;
           font-weight: 700;
           margin-top: 1.5rem;
           margin-bottom: 0.75rem;
