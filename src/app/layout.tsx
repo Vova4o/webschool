@@ -21,6 +21,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Go Изучаем! Повторяем!",
   description: "Изучайте программирование на Go",
+  verification: {
+    yandex: "9395dce2ce9bf986",
+  },
 };
 
 export default function RootLayout({
