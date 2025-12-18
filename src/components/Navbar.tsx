@@ -48,6 +48,12 @@ export default function Navbar() {
               >
                 Справочник
               </Link>
+              <Link
+                href="/pricing"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                Тарифы
+              </Link>
             </nav>
             <UserNav />
           </div>
@@ -130,6 +136,13 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               📖 Справочник
+            </Link>
+            <Link
+              href="/pricing"
+              className="block px-4 py-3 rounded-md text-base font-medium text-gray-800 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              💰 Тарифы
             </Link>
           </div>
         </div>

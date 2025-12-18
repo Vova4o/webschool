@@ -47,6 +47,14 @@ export default function Footer() {
                   Справочник
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/pricing"
+                  className="text-base text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
+                >
+                  Тарифы
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
