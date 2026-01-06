@@ -1,6 +1,8 @@
 import { MetadataRoute } from "next";
 import { getTutorials, getExamples } from "@/lib/db";
 
+export const revalidate = 86400;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://school.vova4o.com";
 
