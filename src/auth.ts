@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getUserByEmail } from "./lib/db";
+import { NEXTAUTH_SECRET } from "./lib/config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -72,6 +73,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: NEXTAUTH_SECRET,
   trustHost: true,
 });

@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
+import { NEXTAUTH_SECRET } from "./config";
 
 /**
  * Require admin role for the request
@@ -8,7 +9,7 @@ import { NextRequest } from "next/server";
 export async function requireAdmin(request: NextRequest) {
   const token = await getToken({
     req: request,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: NEXTAUTH_SECRET,
   });
 
   if (!token || token.role !== "admin") {
@@ -25,7 +26,7 @@ export async function requireAdmin(request: NextRequest) {
 export async function getAuthUser(request: NextRequest) {
   const token = await getToken({
     req: request,
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: NEXTAUTH_SECRET,
   });
 
   return token;

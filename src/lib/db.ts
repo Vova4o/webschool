@@ -1,8 +1,9 @@
 import { Pool } from "pg";
+import { POSTGRES_URL } from "./config";
 
 // Create a connection pool
 const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
+  connectionString: POSTGRES_URL,
 });
 
 export interface Tutorial {
