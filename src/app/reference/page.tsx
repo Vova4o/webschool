@@ -1,3 +1,11 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Справочник Go - Go Изучаем! Повторяем!",
+  description:
+    "Полный справочник синтаксиса и возможностей языка Go. Быстрый доступ к основным концепциям, типам данных и примерам кода.",
+};
+
 export default function Reference() {
   const sections = [
     {

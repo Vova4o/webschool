@@ -1,4 +1,11 @@
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Тарифы - Go Изучаем! Повторяем!",
+  description:
+    "Выберите свой план обучения. Получите доступ к премиум-урокам и расширенным материалам по программированию на Go.",
+};
 
 export default function PricingPage() {
   return (

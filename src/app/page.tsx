@@ -1,6 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "@/components/Footer";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Go Изучаем! Повторяем! - Изучайте программирование на Go",
+  description:
+    "Освойте язык программирования Go с помощью наших комплексных уроков, примеров и практических упражнений. От основ до продвинутых концепций.",
+};
 
 export default function HomePage() {
   return (
