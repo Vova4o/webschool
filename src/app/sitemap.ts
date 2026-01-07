@@ -56,28 +56,70 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let tutorialPages: MetadataRoute.Sitemap = [];
   try {
     const tutorials = await getTutorials();
-    tutorialPages = tutorials.map((tutorial) => ({
-      url: `${baseUrl}/tutorials/${tutorial.slug}`,
-      lastModified: tutorial.updated_at || tutorial.created_at,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    }));
+    if (tutorials && tutorials.length) {
+      tutorialPages = tutorials.map((tutorial) => ({
+        url: `${baseUrl}/tutorials/${tutorial.slug}`,
+        lastModified: tutorial.updated_at || tutorial.created_at,
+        changeFrequency: "weekly" as const,
+        priority: 0.8,
+      }));
+    } else {
+      throw new Error("no tutorials from DB");
+    }
   } catch (error) {
-    console.error("Failed to fetch tutorials for sitemap:", error);
+    console.warn("DB tutorials fetch failed, falling back to API fetch:", error);
+    try {
+      const apiBase = process.env.NEXTAUTH_URL || baseUrl;
+      const res = await fetch(`${apiBase}/api/tutorials`);
+      if (res.ok) {
+        const tutorials = await res.json();
+        tutorialPages = tutorials.map((tutorial: any) => ({
+          url: `${baseUrl}/tutorials/${tutorial.slug}`,
+          lastModified: tutorial.updated_at || tutorial.created_at,
+          changeFrequency: "weekly" as const,
+          priority: 0.8,
+        }));
+      } else {
+        console.error("Fallback API tutorials fetch failed:", res.status);
+      }
+    } catch (apiErr) {
+      console.error("Failed to fetch tutorials from API fallback:", apiErr);
+    }
   }
 
   // Dynamic example pages
   let examplePages: MetadataRoute.Sitemap = [];
   try {
     const examples = await getExamples();
-    examplePages = examples.map((example) => ({
-      url: `${baseUrl}/examples/${example.slug}`,
-      lastModified: example.updated_at || example.created_at,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }));
+    if (examples && examples.length) {
+      examplePages = examples.map((example) => ({
+        url: `${baseUrl}/examples/${example.slug}`,
+        lastModified: example.updated_at || example.created_at,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      }));
+    } else {
+      throw new Error("no examples from DB");
+    }
   } catch (error) {
-    console.error("Failed to fetch examples for sitemap:", error);
+    console.warn("DB examples fetch failed, falling back to API fetch:", error);
+    try {
+      const apiBase = process.env.NEXTAUTH_URL || baseUrl;
+      const res = await fetch(`${apiBase}/api/examples`);
+      if (res.ok) {
+        const examples = await res.json();
+        examplePages = examples.map((example: any) => ({
+          url: `${baseUrl}/examples/${example.slug}`,
+          lastModified: example.updated_at || example.created_at,
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        }));
+      } else {
+        console.error("Fallback API examples fetch failed:", res.status);
+      }
+    } catch (apiErr) {
+      console.error("Failed to fetch examples from API fallback:", apiErr);
+    }
   }
 
   return [...staticPages, ...tutorialPages, ...examplePages];
