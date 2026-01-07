@@ -23,6 +23,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Go Изучаем! Повторяем!",
   description: "Изучайте программирование на Go",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
   verification: {
     yandex: "9395dce2ce9bf986",
   },
