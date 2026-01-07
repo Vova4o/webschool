@@ -14,8 +14,10 @@ export const NEXTAUTH_SECRET = required(
 
 export const NODE_ENV = process.env.NODE_ENV || "development";
 
-export default {
+const config = {
   POSTGRES_URL,
   NEXTAUTH_SECRET,
   NODE_ENV,
 };
+
+export default config;
