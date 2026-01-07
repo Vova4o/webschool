@@ -67,7 +67,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       throw new Error("no tutorials from DB");
     }
   } catch (error) {
-    console.warn("DB tutorials fetch failed, falling back to API fetch:", error);
+    console.warn(
+      "DB tutorials fetch failed, falling back to API fetch:",
+      error
+    );
     try {
       const apiBase = process.env.NEXTAUTH_URL || baseUrl;
       const res = await fetch(`${apiBase}/api/tutorials`);
