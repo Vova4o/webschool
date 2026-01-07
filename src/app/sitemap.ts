@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getTutorials, getExamples } from "@/lib/db";
+import { getTutorials } from "@/lib/db";
 
 export const revalidate = 86400;
 
@@ -90,40 +90,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Dynamic example pages
-  let examplePages: MetadataRoute.Sitemap = [];
-  try {
-    const examples = await getExamples();
-    if (examples && examples.length) {
-      examplePages = examples.map((example) => ({
-        url: `${baseUrl}/examples/${example.slug}`,
-        lastModified: example.updated_at || example.created_at,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      }));
-    } else {
-      throw new Error("no examples from DB");
-    }
-  } catch (error) {
-    console.warn("DB examples fetch failed, falling back to API fetch:", error);
-    try {
-      const apiBase = process.env.NEXTAUTH_URL || baseUrl;
-      const res = await fetch(`${apiBase}/api/examples`);
-      if (res.ok) {
-        const examples = await res.json();
-        examplePages = examples.map((example: any) => ({
-          url: `${baseUrl}/examples/${example.slug}`,
-          lastModified: example.updated_at || example.created_at,
-          changeFrequency: "weekly" as const,
-          priority: 0.7,
-        }));
-      } else {
-        console.error("Fallback API examples fetch failed:", res.status);
-      }
-    } catch (apiErr) {
-      console.error("Failed to fetch examples from API fallback:", apiErr);
-    }
-  }
-
-  return [...staticPages, ...tutorialPages, ...examplePages];
+  return [...staticPages, ...tutorialPages];
 }
