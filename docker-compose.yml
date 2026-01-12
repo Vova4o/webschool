@@ -33,7 +33,7 @@ services:
       - dokploy-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.webschool-app.rule=Host(`school.vova4o.com`)"
+      - "traefik.http.routers.webschool-app.rule=Host(`${DOMAIN:-localhost}`)"
       - "traefik.http.routers.webschool-app.entrypoints=web"
       - "traefik.http.services.webschool-app.loadbalancer.server.port=3000"
       - "traefik.docker.network=dokploy-network"
