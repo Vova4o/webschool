@@ -197,6 +197,9 @@ export default function MarkdownContent({ content }: MarkdownContentProps) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
+        components={{
+          h1: ({ node, ...props }) => <h2 {...props} />,
+        }}
       >
         {content}
       </ReactMarkdown>
