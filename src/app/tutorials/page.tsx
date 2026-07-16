@@ -4,6 +4,8 @@ import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
 
+const QUERY_TIMEOUT_MS = 1500;
+
 export const metadata: Metadata = {
   title: "Go Tutorials | WebSchool",
   description:
@@ -23,77 +25,90 @@ interface FallbackTutorial {
   slug: string;
 }
 
+const fallbackBasicTutorials: FallbackTutorial[] = [
+  {
+    title: "Начало работы с Go",
+    description:
+      "Изучите основы программирования на Go, установку и вашу первую программу.",
+    level: "Начинающий",
+    duration: "30 мин",
+    slug: "getting-started",
+  },
+];
+
+const fallbackAdvancedTutorials: FallbackTutorial[] = [
+  {
+    title: "Работа с PostgreSQL",
+    description:
+      "Изучите подключение к PostgreSQL, выполнение запросов и работу с транзакциями в Go.",
+    level: "Продвинутый",
+    duration: "120 мин",
+    slug: "postgresql-integration",
+  },
+  {
+    title: "Интеграция с Redis",
+    description:
+      "Освойте кэширование данных и работу с Redis в Go приложениях.",
+    level: "Продвинутый",
+    duration: "90 мин",
+    slug: "redis-caching",
+  },
+  {
+    title: "Работа с Apache Kafka",
+    description:
+      "Изучите отправку и получение сообщений через Apache Kafka в Go.",
+    level: "Продвинутый",
+    duration: "150 мин",
+    slug: "kafka-messaging",
+  },
+  {
+    title: "RabbitMQ и очереди сообщений",
+    description:
+      "Настройте систему обмена сообщениями с RabbitMQ в Go приложениях.",
+    level: "Продвинутый",
+    duration: "135 мин",
+    slug: "rabbitmq-queues",
+  },
+  {
+    title: "Docker и контейнеризация",
+    description:
+      "Создайте Docker-образы для Go приложений и настройте развертывание.",
+    level: "Продвинутый",
+    duration: "100 мин",
+    slug: "docker-containerization",
+  },
+  {
+    title: "Микросервисы с gRPC",
+    description:
+      "Постройте микросервисную архитектуру используя gRPC и Protocol Buffers.",
+    level: "Продвинутый",
+    duration: "180 мин",
+    slug: "grpc-microservices",
+  },
+];
+
+async function getTutorialsWithTimeout() {
+  return Promise.race([
+    getTutorials(),
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Tutorials query timeout")), QUERY_TIMEOUT_MS)
+    ),
+  ]);
+}
+
 export default async function Tutorials() {
   let basicTutorials: (Tutorial | FallbackTutorial)[] = [];
   let advancedTutorials: (Tutorial | FallbackTutorial)[] = [];
 
   try {
-    const allTutorials = await getTutorials();
+    const allTutorials = await getTutorialsWithTimeout();
     basicTutorials = allTutorials.filter((t) => t.category === "basics");
     advancedTutorials = allTutorials.filter((t) => t.category === "advanced");
   } catch (error) {
     console.error("Failed to fetch tutorials from database:", error);
     // Use fallback data if database is not available
-    basicTutorials = [
-      {
-        title: "Начало работы с Go",
-        description:
-          "Изучите основы программирования на Go, установку и вашу первую программу.",
-        level: "Начинающий",
-        duration: "30 мин",
-        slug: "getting-started",
-      },
-    ];
-    advancedTutorials = [
-      {
-        title: "Работа с PostgreSQL",
-        description:
-          "Изучите подключение к PostgreSQL, выполнение запросов и работу с транзакциями в Go.",
-        level: "Продвинутый",
-        duration: "120 мин",
-        slug: "postgresql-integration",
-      },
-      {
-        title: "Интеграция с Redis",
-        description:
-          "Освойте кэширование данных и работу с Redis в Go приложениях.",
-        level: "Продвинутый",
-        duration: "90 мин",
-        slug: "redis-caching",
-      },
-      {
-        title: "Работа с Apache Kafka",
-        description:
-          "Изучите отправку и получение сообщений через Apache Kafka в Go.",
-        level: "Продвинутый",
-        duration: "150 мин",
-        slug: "kafka-messaging",
-      },
-      {
-        title: "RabbitMQ и очереди сообщений",
-        description:
-          "Настройте систему обмена сообщениями с RabbitMQ в Go приложениях.",
-        level: "Продвинутый",
-        duration: "135 мин",
-        slug: "rabbitmq-queues",
-      },
-      {
-        title: "Docker и контейнеризация",
-        description:
-          "Создайте Docker-образы для Go приложений и настройте развертывание.",
-        level: "Продвинутый",
-        duration: "100 мин",
-        slug: "docker-containerization",
-      },
-      {
-        title: "Микросервисы с gRPC",
-        description:
-          "Постройте микросервисную архитектуру используя gRPC и Protocol Buffers.",
-        level: "Продвинутый",
-        duration: "180 мин",
-        slug: "grpc-microservices",
-      },
-    ];
+    basicTutorials = fallbackBasicTutorials;
+    advancedTutorials = fallbackAdvancedTutorials;
   }
 
   const getLevelColor = (level: string) => {
