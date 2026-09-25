@@ -41,7 +41,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN apk add --no-cache curl
 
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 --ingroup nodejs nextjs
 
 # Copy built application
 COPY --from=builder /app/public ./public
