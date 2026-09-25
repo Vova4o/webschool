@@ -33,6 +33,20 @@ a { color: inherit; text-decoration: none; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a:focus-visible, button:focus-visible { outline: 3px solid #47bda2; outline-offset: 4px; }
 .site-container { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
+.lesson-header-container { width: 100%; max-width: 1024px; margin-inline: auto; }
+.lesson-content-layout, .lesson-navigation { width: 100%; max-width: 1280px; margin-inline: auto; }
+@media (min-width: 1024px) {
+  .lesson-content-layout { grid-template-columns: minmax(0, 1fr) clamp(19rem, 24vw, 24rem); }
+}
+@media (min-width: 1280px) {
+  .site-container { width: min(90%, 1440px); }
+  .lesson-header-container { width: 80%; max-width: 1280px; }
+  .lesson-content-layout, .lesson-navigation { width: 90%; max-width: 1440px; }
+}
+@media (max-width: 850px) {
+  .lesson-header-container, .lesson-content-layout, .lesson-navigation { width: 100%; max-width: none; }
+  .lesson-content-layout { grid-template-columns: minmax(0, 1fr); }
+}
 
 /* Navigation */
 .site-header { position: relative; z-index: 30; background: rgba(248, 249, 247, .94); border-bottom: 1px solid rgba(17, 29, 45, .08); backdrop-filter: blur(16px); }

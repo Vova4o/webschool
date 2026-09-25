@@ -78,7 +78,7 @@ function CurriculumLessonPage({ slug }: { slug: string }) {
     <main className="min-h-screen bg-[#f4f7f6] text-slate-900">
       <header className="relative overflow-hidden bg-[#0b1727] text-white">
         <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-32 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
-        <div className="relative mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+        <div className="lesson-header-container relative px-5 py-10 sm:px-8 sm:py-14">
           <Link href="/tutorials" className="inline-flex items-center gap-2 text-sm font-medium text-slate-300 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-300">← Все этапы</Link>
           <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.15em] text-emerald-200">
             <span>{stage?.eyebrow ?? "ПРАКТИЧЕСКИЙ УРОК"}</span>
@@ -91,7 +91,7 @@ function CurriculumLessonPage({ slug }: { slug: string }) {
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-10">
+      <div className="lesson-content-layout mx-auto grid gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:gap-10">
         <div className="min-w-0 space-y-7">
           <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9" aria-label="Теория урока">
             <MarkdownContent content={lesson.content} />
@@ -130,7 +130,7 @@ function CurriculumLessonPage({ slug }: { slug: string }) {
         </aside>
       </div>
 
-      <nav aria-label="Навигация по урокам" className="mx-auto max-w-7xl px-5 pb-12 sm:px-8 sm:pb-16">
+      <nav aria-label="Навигация по урокам" className="lesson-navigation mx-auto px-5 pb-12 sm:px-8 sm:pb-16">
         <div className="grid gap-3 border-t border-slate-200 pt-6 sm:grid-cols-2">
           {previous ? <Link href={`/tutorials/${previous.slug}`} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"><span className="block text-xs font-semibold uppercase tracking-wider text-slate-500">← Предыдущий урок</span><span className="mt-2 block font-semibold">{previous.title}</span></Link> : <span />}
           {next ? <Link href={`/tutorials/${next.slug}`} className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-left transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:text-right"><span className="block text-xs font-semibold uppercase tracking-wider text-emerald-800">Следующий урок →</span><span className="mt-2 block font-semibold text-slate-900">{next.title}</span></Link> : <Link href="/tutorials" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm font-semibold text-emerald-900 sm:text-right">Вы завершили маршрут · вернуться к этапам →</Link>}

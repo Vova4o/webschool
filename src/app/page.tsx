@@ -93,27 +93,27 @@ export default function HomePage() {
               <h2 className="section-title mt-4">Знание становится<br className="hidden sm:block" /> навыком в коде.</h2>
             </div>
             <p className="section-lead max-w-2xl md:justify-self-end">
-              Каждый этап помогает перейти от чтения к самостоятельному решению: вы разбираете идею, применяете её и проверяете результат.
+              К концу маршрута у вас будет учебный проект на Go: небольшой JSON API событий с фильтром по дате и замером скорости ответа. По пути вы также напишете консольные программы и проверите отдельные функции тестами.
             </p>
           </div>
           <div className="outcome-grid mt-11 grid gap-4 md:grid-cols-3">
             <article className="outcome-card outcome-card-mint">
-              <span className="outcome-index">01 / ПОНЯТЬ</span>
+              <span className="outcome-index">01 / КОНСОЛЬ</span>
               <div className="outcome-symbol symbol-brackets" aria-hidden="true">{'{ }'}</div>
-              <h3>Разобраться в языке</h3>
-              <p>Увидеть, как Go выражает данные, решения и поведение программы.</p>
+              <h3>Написать свои программы</h3>
+              <p>Собрать небольшие консольные задачи с переменными, условиями, циклами и функциями.</p>
             </article>
             <article className="outcome-card outcome-card-blue">
-              <span className="outcome-index">02 / СОБРАТЬ</span>
+              <span className="outcome-index">02 / ПРОВЕРИТЬ</span>
               <div className="outcome-symbol symbol-terminal" aria-hidden="true">&gt;_</div>
-              <h3>Закрепить практикой</h3>
-              <p>Написать свои небольшие решения и довести их до рабочего результата.</p>
+              <h3>Проверить поведение</h3>
+              <p>Обработать ошибки, написать тесты и сравнить результаты на заданных примерах.</p>
             </article>
             <article className="outcome-card outcome-card-warm">
-              <span className="outcome-index">03 / ПРИМЕНИТЬ</span>
+              <span className="outcome-index">03 / ПРОЕКТ</span>
               <div className="outcome-symbol symbol-star" aria-hidden="true">✳</div>
-              <h3>Мыслить как инженер</h3>
-              <p>Проверять крайние случаи, ошибки и качество того, что вы построили.</p>
+              <h3>Собрать учебный JSON API</h3>
+              <p>Выдать список событий по HTTP, добавить фильтр по дате и измерить задержку на учебном наборе данных.</p>
             </article>
           </div>
         </section>
