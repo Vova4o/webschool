@@ -1,354 +1,131 @@
 "use client";
 
 import Link from "next/link";
-import { Example } from "@/lib/db";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { curriculumLessons, curriculumStages } from "@/lib/curriculum";
 
-export default function Examples() {
-  const [examples, setExamples] = useState<Example[]>([]);
+const featuredSlugs = [
+  "variables-and-output",
+  "conditions-and-loops",
+  "functions-and-results",
+  "arrays-and-slices",
+  "maps-and-data-lookup",
+  "errors-and-validation",
+  "goroutines-and-channels",
+  "expense-csv-project",
+];
 
-  useEffect(() => {
-    async function fetchExamples() {
-      try {
-        const res = await fetch("/api/examples");
-        if (res.ok) {
-          const data = await res.json();
-          setExamples(Array.isArray(data) ? data : []);
-        }
-      } catch (error) {
-        console.error("Failed to fetch examples:", error);
-      }
+const examples = featuredSlugs.flatMap((slug) => {
+  const lesson = curriculumLessons.find((item) => item.slug === slug);
+  const code = lesson?.content.match(/```go\s*\n([\s\S]*?)```/)?.[1]?.trim();
+  if (!lesson || !code) return [];
+
+  const stage = curriculumStages.find((item) => item.id === lesson.stageId);
+  return [{ ...lesson, code, concept: stage?.title ?? "Практика" }];
+});
+
+function ExampleCode({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+    } catch {
+      setCopied(false);
     }
-    fetchExamples();
-  }, []);
-
-  const fallbackExamples = [
-    {
-      title: "Привет, мир",
-      description: "Простая программа Hello World для начала работы с Go.",
-      category: "Основы",
-      code: `package main
-
-import "fmt"
-
-func main() {
-    fmt.Println("Привет, мир!")
-}`,
-      explanation:
-        "Это классическая первая программа. Она импортирует пакет fmt и использует Println для вывода текста.",
-    },
-    {
-      title: "Переменные и константы",
-      description: "Работа с различными типами переменных и констант в Go.",
-      category: "Основы",
-      code: `package main
-
-import "fmt"
-
-func main() {
-    // Объявление переменных
-    var name string = "Программирование на Go"
-    var version float64 = 1.21
-    
-    // Краткое объявление переменной
-    isAwesome := true
-    
-    // Константы
-    const pi = 3.14159
-    
-    fmt.Printf("Язык: %s\\n", name)
-    fmt.Printf("Версия: %.2f\\n", version)
-    fmt.Printf("Потрясающий: %t\\n", isAwesome)
-    fmt.Printf("Пи: %f\\n", pi)
-}`,
-      explanation:
-        "Демонстрирует различные способы объявления переменных и констант, а также различные типы данных.",
-    },
-    {
-      title: "Операции со срезами",
-      description: "Работа со срезами - динамическими массивами в Go.",
-      category: "Структуры данных",
-      code: `package main
-
-import "fmt"
-
-func main() {
-    // Создание срезов
-    numbers := []int{1, 2, 3, 4, 5}
-    
-    // Добавление в срез
-    numbers = append(numbers, 6, 7, 8)
-    
-    // Получение подсреза
-    subset := numbers[2:5]
-    
-    fmt.Println("Исходный срез:", numbers)
-    fmt.Println("Подсрез [2:5]:", subset)
-    fmt.Println("Длина:", len(numbers))
-    fmt.Println("Ёмкость:", cap(numbers))
-    
-    // Итерация по срезу
-    for i, value := range numbers {
-        fmt.Printf("Индекс: %d, Значение: %d\\n", i, value)
-    }
-}`,
-      explanation:
-        "Показывает, как создавать, изменять и итерировать по срезам, которые являются одним из наиболее важных типов данных в Go.",
-    },
-    {
-      title: "Структуры и методы",
-      description:
-        "Определение структур и методов для создания пользовательских типов.",
-      category: "ООП",
-      code: `package main
-
-import "fmt"
-
-// Определение структуры
-type Person struct {
-    Name string
-    Age  int
-    City string
-}
-
-// Метод с приёмником по значению
-func (p Person) Greet() string {
-    return fmt.Sprintf("Привет, я %s из %s", p.Name, p.City)
-}
-
-// Метод с приёмником по указателю
-func (p *Person) HaveBirthday() {
-    p.Age++
-}
-
-func main() {
-    // Создание экземпляра структуры
-    person := Person{
-        Name: "Алиса",
-        Age:  25,
-        City: "Москва",
-    }
-    
-    fmt.Println(person.Greet())
-    fmt.Printf("Возраст до дня рождения: %d\\n", person.Age)
-    
-    person.HaveBirthday()
-    fmt.Printf("Возраст после дня рождения: %d\\n", person.Age)
-}`,
-      explanation:
-        "Демонстрирует, как определять структуры и прикреплять к ним методы, показывая приёмники по значению и по указателю.",
-    },
-    {
-      title: "Горутины и каналы",
-      description: "Основы параллелизма с горутинами и каналами.",
-      category: "Параллелизм",
-      code: `package main
-
-import (
-    "fmt"
-    "time"
-)
-
-func worker(id int, jobs <-chan int, results chan<- int) {
-    for job := range jobs {
-        fmt.Printf("Работник %d обрабатывает задание %d\\n", id, job)
-        time.Sleep(time.Second) // Имитация работы
-        results <- job * 2
-    }
-}
-
-func main() {
-    jobs := make(chan int, 100)
-    results := make(chan int, 100)
-    
-    // Запуск 3 работников
-    for w := 1; w <= 3; w++ {
-        go worker(w, jobs, results)
-    }
-    
-    // Отправка 5 заданий
-    for j := 1; j <= 5; j++ {
-        jobs <- j
-    }
-    close(jobs)
-    
-    // Сбор результатов
-    for r := 1; r <= 5; r++ {
-        result := <-results
-        fmt.Printf("Результат: %d\\n", result)
-    }
-}`,
-      explanation:
-        "Показывает, как использовать горутины для параллельного выполнения и каналы для коммуникации между ними.",
-    },
-    {
-      title: "Обработка ошибок",
-      description: "Правильные паттерны обработки ошибок в Go.",
-      category: "Обработка ошибок",
-      code: `package main
-
-import (
-    "errors"
-    "fmt"
-)
-
-func divide(a, b float64) (float64, error) {
-    if b == 0 {
-        return 0, errors.New("деление на ноль")
-    }
-    return a / b, nil
-}
-
-func main() {
-    // Успешная операция
-    result, err := divide(10, 2)
-    if err != nil {
-        fmt.Printf("Ошибка: %v\\n", err)
-    } else {
-        fmt.Printf("10 / 2 = %.2f\\n", result)
-    }
-    
-    // Операция с ошибкой
-    result, err = divide(10, 0)
-    if err != nil {
-        fmt.Printf("Ошибка: %v\\n", err)
-    } else {
-        fmt.Printf("10 / 0 = %.2f\\n", result)
-    }
-}`,
-      explanation:
-        "Демонстрирует подход Go к обработке ошибок с использованием множественных возвращаемых значений и явной проверки ошибок.",
-    },
-  ];
-
-  // Use database examples if available, fallback to hardcoded
-  const displayExamples = examples.length > 0 ? examples : fallbackExamples;
-  const categories = [
-    ...new Set(displayExamples.map((example) => example.category)),
-  ];
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">
-            Примеры кода на Go
-          </h2>
-          <p className="mt-4 text-xl text-gray-600 dark:text-gray-400">
-            Практические примеры кода для понимания концепций программирования
-            на Go.
-          </p>
+    <div className="overflow-hidden rounded-2xl border border-slate-700/70 bg-[#07111f] shadow-inner shadow-black/20">
+      <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
+        <div className="flex items-center gap-3 text-xs text-slate-400">
+          <span className="flex gap-1.5" aria-hidden="true"><i className="h-2 w-2 rounded-full bg-rose-400" /><i className="h-2 w-2 rounded-full bg-amber-300" /><i className="h-2 w-2 rounded-full bg-emerald-300" /></span>
+          <span>main.go</span>
         </div>
+        <button type="button" onClick={copyCode} className="text-xs font-medium text-emerald-300 transition hover:text-emerald-200">
+          {copied ? "Скопировано" : "Скопировать код"}
+        </button>
+      </div>
+      <pre className="overflow-x-auto p-5 text-[13px] leading-6 text-slate-100 sm:p-6 sm:text-sm"><code>{code}</code></pre>
+    </div>
+  );
+}
 
-        {/* Category Filter */}
-        <div className="mb-8">
-          <div className="flex flex-wrap gap-2 justify-center">
-            {categories.map((category) => (
-              <span
-                key={category}
-                className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-              >
-                {category}
-              </span>
-            ))}
+export default function ExamplesPage() {
+  return (
+    <main>
+      <section className="hero-shell relative isolate overflow-hidden">
+        <div className="hero-grid absolute inset-0 -z-10" aria-hidden="true" />
+        <div className="hero-glow hero-glow-one absolute -z-10" aria-hidden="true" />
+        <div className="hero-glow hero-glow-two absolute -z-10" aria-hidden="true" />
+        <div className="site-container hero-content py-16 sm:py-20 lg:py-24">
+          <p className="eyebrow eyebrow-mint"><span className="status-dot" /> Примеры из программы</p>
+          <h1 className="hero-title mt-6 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-[-0.055em] sm:text-6xl">
+            Смотрите на идею.<br /><span className="text-mint">Запускайте свой код.</span>
+          </h1>
+          <p className="hero-copy mt-6 max-w-2xl text-base leading-7 sm:text-lg sm:leading-8">
+            Небольшие самостоятельные программы показывают ключевые приёмы Go. Каждый пример взят из урока маршрута и готов к запуску.
+          </p>
+          <div className="hero-meta mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm">
+            <span><span className="meta-mark">{examples.length}</span> примеров из уроков</span>
+            <span>Каждый можно запустить локально</span>
           </div>
         </div>
+        <div className="hero-bottom-line" aria-hidden="true" />
+      </section>
 
-        {/* Examples Grid */}
-        <div className="space-y-8">
-          {displayExamples.map((example, index) => (
-            <div
-              key={index}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {example.title}
-                  </h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                    {example.category}
-                  </span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  {example.description}
-                </p>
+      <section className="site-container py-16 sm:py-20">
+        <div className="section-heading grid gap-5 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+          <div>
+            <p className="eyebrow eyebrow-ink">Практика в коде</p>
+            <h2 className="section-title mt-4">Одна задача — один приём.</h2>
+          </div>
+          <p className="section-lead max-w-2xl md:justify-self-end">Сначала прочитайте пояснение, затем запустите программу командой из карточки. Полный урок поможет разобраться глубже и предложит упражнение.</p>
+        </div>
 
-                {/* Code Block */}
-                <div className="bg-gray-900 rounded-lg p-4 mb-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-400">Go</span>
-                    <button
-                      onClick={() =>
-                        navigator.clipboard.writeText(example.code)
-                      }
-                      className="text-sm text-blue-400 hover:text-blue-300"
-                    >
-                      Скопировать код
-                    </button>
+        <div className="mt-10 space-y-6">
+          {examples.map((example, index) => (
+            <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_18px_55px_-38px_rgba(15,23,42,.34)] sm:p-8" key={example.slug}>
+              <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="max-w-3xl">
+                  <div className="mb-3 flex flex-wrap items-center gap-2.5">
+                    <span className="text-xs font-bold tracking-[.14em] text-slate-400">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">{example.concept}</span>
+                    <span className="text-xs text-slate-500">{example.duration}</span>
                   </div>
-                  <pre className="text-sm text-gray-100 overflow-x-auto">
-                    <code>{example.code}</code>
-                  </pre>
+                  <h3 className="text-2xl font-semibold tracking-[-.035em] text-slate-950 sm:text-3xl">{example.title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">{example.description}</p>
                 </div>
-
-                {/* Explanation */}
-                {"explanation" in example && example.explanation && (
-                  <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
-                    <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                      💡 Объяснение
-                    </h4>
-                    <p className="text-blue-800 dark:text-blue-200 text-sm">
-                      {example.explanation}
-                    </p>
-                  </div>
-                )}
+                <Link href={`/tutorials/${example.slug}`} className="text-link inline-flex shrink-0 items-center gap-2">
+                  Открыть урок <span aria-hidden="true">↗</span>
+                </Link>
               </div>
-            </div>
+              <ExampleCode code={example.code} />
+              <div className="mt-5 flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[.12em] text-slate-500">Запустить локально</p>
+                  <code className="mt-1 inline-block rounded-md bg-white px-2.5 py-1 font-mono text-sm text-slate-900 shadow-sm">{example.command}</code>
+                </div>
+                <p className="max-w-2xl text-sm leading-6 text-slate-600">{example.outcomes.slice(0, 2).join(" · ")}</p>
+              </div>
+            </article>
           ))}
         </div>
+      </section>
 
-        {/* Try it out section */}
-        <div className="mt-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-bold text-white mb-4">
-            Готовы попробовать эти примеры?
-          </h3>
-          <p className="text-blue-100 mb-6">
-            Скопируйте примеры кода и запустите их в Go Playground или в вашей
-            локальной среде.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://play.golang.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 transition-colors duration-200"
-            >
-              Go Playground
-              <svg
-                className="ml-2 h-4 w-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                />
-              </svg>
-            </a>
-            <Link
-              href="/tutorials"
-              className="inline-flex items-center px-6 py-3 border border-white text-base font-medium rounded-md text-white bg-transparent hover:bg-white hover:text-blue-600 transition-colors duration-200"
-            >
-              Узнать больше в уроках
-            </Link>
+      <section className="site-container pb-20 sm:pb-24">
+        <div className="cta-panel relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-12 lg:px-14">
+          <div className="cta-shape" aria-hidden="true">go</div>
+          <div className="relative max-w-2xl">
+            <p className="eyebrow eyebrow-mint">Продолжайте маршрут</p>
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-white sm:text-4xl">Пример показывает шаг. Урок помогает пройти путь.</h2>
+            <p className="mt-4 max-w-xl leading-7 text-slate-300">Выберите тему, выполните упражнение и проверьте решение по понятным критериям.</p>
+            <Link href="/tutorials" className="button-primary mt-7">Смотреть все уроки <span aria-hidden="true">→</span></Link>
           </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

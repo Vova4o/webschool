@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import AuthProvider from "@/components/AuthProvider";
 
 const geistSans = Geist({
@@ -21,8 +22,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Go Изучаем! Повторяем!",
-  description: "Изучайте программирование на Go",
+  title: {
+    default: "Go — изучаем и повторяем",
+    template: "%s · Go",
+  },
+  description:
+    "Практический маршрут по Go: короткие объяснения, оригинальные упражнения и проекты от первых программ до HTTP-сервисов.",
+  applicationName: "Go — изучаем и повторяем",
+  openGraph: {
+    title: "Go — изучаем и повторяем",
+    description:
+      "Практический маршрут по Go: короткие объяснения, оригинальные упражнения и проекты.",
+    locale: "ru_RU",
+    type: "website",
+  },
   verification: {
     yandex: "9395dce2ce9bf986",
   },
@@ -49,6 +62,7 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           {children}
+          <Footer />
         </AuthProvider>
       </body>
     </html>

@@ -1,354 +1,143 @@
-import { Metadata } from "next";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { curriculumLessons } from "@/lib/curriculum";
 
 export const metadata: Metadata = {
-  title: "Справочник Go - Go Изучаем! Повторяем!",
-  description:
-    "Полный справочник синтаксиса и возможностей языка Go. Быстрый доступ к основным концепциям, типам данных и примерам кода.",
+  title: "Краткий справочник Go | WebSchool",
+  description: "Основной синтаксис Go с короткими примерами и ссылками на практические уроки.",
 };
 
+const sections = [
+  {
+    id: "variables",
+    number: "01",
+    title: "Переменные и типы",
+    description: "Объявляйте значения явно или используйте короткую форму внутри функций.",
+    lesson: "variables-and-output",
+    items: [
+      { title: "Короткое объявление", code: 'name := "Мира"\ncount := 3', note: "Тип выводится из значения. Форма := доступна внутри функций." },
+      { title: "Объявление через var", code: 'var city string = "Казань"\nvar ready bool', note: "Без начального значения переменная получает нулевое значение своего типа." },
+      { title: "Константа", code: 'const maxRetries = 5', note: "Значение константы задаётся при объявлении и не меняется." },
+    ],
+  },
+  {
+    id: "flow",
+    number: "02",
+    title: "Условия и циклы",
+    description: "Ветвление и повторение строятся на компактных конструкциях языка.",
+    lesson: "conditions-and-loops",
+    items: [
+      { title: "Условие", code: 'if score >= 60 {\n\tfmt.Println("зачёт")\n} else {\n\tfmt.Println("повторить")\n}', note: "Круглые скобки вокруг условия не нужны; фигурные скобки обязательны." },
+      { title: "Цикл со счётчиком", code: "for i := 0; i < 3; i++ {\n\tfmt.Println(i)\n}", note: "for — единственная конструкция цикла в Go." },
+      { title: "Перебор среза", code: "for index, value := range values {\n\tfmt.Println(index, value)\n}", note: "Если одна из переменных не нужна, замените её на _." },
+    ],
+  },
+  {
+    id: "functions",
+    number: "03",
+    title: "Функции",
+    description: "Делите программу на небольшие действия с ясными входами и результатами.",
+    lesson: "functions-and-results",
+    items: [
+      { title: "Параметры и результат", code: "func add(a, b int) int {\n\treturn a + b\n}", note: "Соседние параметры могут использовать общий тип." },
+      { title: "Несколько результатов", code: "func split(total, parts int) (int, int) {\n\treturn total / parts, total % parts\n}", note: "Несколько возвращаемых значений часто используют для результата и ошибки." },
+    ],
+  },
+  {
+    id: "collections",
+    number: "04",
+    title: "Срезы и карты",
+    description: "Выбирайте срез для упорядоченного списка, map — для доступа по ключу.",
+    lesson: "arrays-and-slices",
+    items: [
+      { title: "Срез", code: "scores := []int{8, 10, 9}\nscores = append(scores, 7)", note: "append возвращает срез; сохраняйте результат обратно." },
+      { title: "Карта и проверка ключа", code: 'points := map[string]int{"Мира": 12}\nvalue, ok := points["Мира"]', note: "ok показывает, найден ли ключ, даже если значение равно нулю." },
+    ],
+  },
+  {
+    id: "structs",
+    number: "05",
+    title: "Структуры и методы",
+    description: "Связывайте данные и поведение в собственных типах.",
+    lesson: "structs-and-methods",
+    items: [
+      { title: "Структура", code: "type Book struct {\n\tTitle string\n\tPages int\n}", note: "Поля структуры описывают данные одного значения." },
+      { title: "Метод", code: "func (b Book) Summary() string {\n\treturn b.Title\n}", note: "Метод объявляется с получателем перед именем функции." },
+    ],
+  },
+  {
+    id: "errors",
+    number: "06",
+    title: "Ошибки",
+    description: "Go передаёт ошибки как значения и предлагает явно проверять результат.",
+    lesson: "errors-and-validation",
+    items: [
+      { title: "Проверка ошибки", code: 'value, err := strconv.Atoi("42")\nif err != nil {\n\treturn err\n}', note: "Проверяйте err сразу после вызова, который его возвращает." },
+      { title: "Создание ошибки", code: 'return fmt.Errorf("прочитать файл: %w", err)', note: "%w оборачивает исходную ошибку, сохраняя возможность её проверить." },
+    ],
+  },
+  {
+    id: "concurrency",
+    number: "07",
+    title: "Горутины и каналы",
+    description: "Запускайте работу параллельно и передавайте данные между задачами.",
+    lesson: "goroutines-and-channels",
+    items: [
+      { title: "Запуск горутины", code: "go process(item)", note: "Вызов выполняется конкурентно; продумайте, как дождаться результата." },
+      { title: "Передача через канал", code: "results := make(chan string)\ngo func() { results <- load() }()\nvalue := <-results", note: "Небуферизованный канал связывает отправителя с получателем." },
+    ],
+  },
+];
+
+const lessonTitles = new Map(curriculumLessons.map((lesson) => [lesson.slug, lesson.title]));
+
 export default function Reference() {
-  const sections = [
-    {
-      title: "Базовый синтаксис",
-      items: [
-        {
-          name: "Объявление пакета",
-          syntax: "package main",
-          description:
-            "Каждый файл Go начинается с объявления пакета. 'main' особенный - он определяет исполняемую программу.",
-        },
-        {
-          name: "Оператор импорта",
-          syntax: 'import "fmt"',
-          description:
-            "Импортирует внешние пакеты. Используйте скобки для множественного импорта.",
-        },
-        {
-          name: "Объявление функции",
-          syntax: "func functionName(param type) returnType { }",
-          description:
-            "Определяет функцию с параметрами и типом возвращаемого значения.",
-        },
-        {
-          name: "Объявление переменной",
-          syntax: "var name type = value",
-          description:
-            "Объявляет переменную с явным типом. Можно опустить тип для автоматического вывода типа.",
-        },
-        {
-          name: "Краткое объявление",
-          syntax: "name := value",
-          description:
-            "Краткое объявление переменной с выводом типа. Работает только внутри функций.",
-        },
-      ],
-    },
-    {
-      title: "Типы данных",
-      items: [
-        {
-          name: "Базовые типы",
-          syntax:
-            "bool, string, int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, byte, rune, float32, float64, complex64, complex128",
-          description: "Встроенные базовые типы данных Go.",
-        },
-        {
-          name: "Массивы",
-          syntax: "[5]int{1, 2, 3, 4, 5}",
-          description:
-            "Массивы фиксированного размера. Размер является частью типа.",
-        },
-        {
-          name: "Срезы",
-          syntax: "[]int{1, 2, 3}",
-          description:
-            "Динамические массивы. Используются чаще обычных массивов.",
-        },
-        {
-          name: "Карты",
-          syntax: 'map[string]int{"key": 42}',
-          description: "Хеш-таблицы/словари. Пары ключ-значение.",
-        },
-        {
-          name: "Структуры",
-          syntax: "type Person struct { Name string; Age int }",
-          description: "Пользовательские типы, группирующие связанные данные.",
-        },
-        {
-          name: "Указатели",
-          syntax: "*int, &variable",
-          description:
-            "Ссылки на адреса памяти. Используйте & для получения адреса, * для разыменования.",
-        },
-      ],
-    },
-    {
-      title: "Управление потоком",
-      items: [
-        {
-          name: "Условный оператор if",
-          syntax: "if condition { } else if condition { } else { }",
-          description:
-            "Условное выполнение. Скобки вокруг условия не требуются.",
-        },
-        {
-          name: "Оператор switch",
-          syntax: "switch value { case 1: ...; case 2: ...; default: ... }",
-          description:
-            "Многовариантное ветвление. По умолчанию нет провала между case.",
-        },
-        {
-          name: "Цикл for",
-          syntax: "for i := 0; i < 10; i++ { }",
-          description:
-            "Единственная циклическая конструкция в Go. Может использоваться как while.",
-        },
-        {
-          name: "Цикл range",
-          syntax: "for index, value := range slice { }",
-          description: "Итерация по массивам, срезам, картам или каналам.",
-        },
-        {
-          name: "Defer",
-          syntax: "defer function()",
-          description:
-            "Откладывает выполнение функции до возврата из окружающей функции.",
-        },
-      ],
-    },
-    {
-      title: "Функции",
-      items: [
-        {
-          name: "Базовая функция",
-          syntax: "func add(a, b int) int { return a + b }",
-          description: "Функция с параметрами и возвращаемым значением.",
-        },
-        {
-          name: "Множественные возвращаемые значения",
-          syntax: "func divide(a, b int) (int, error) { }",
-          description:
-            "Функции могут возвращать несколько значений. Обычно значение + ошибка.",
-        },
-        {
-          name: "Именованные возвращаемые значения",
-          syntax: "func divide(a, b int) (result int, err error) { }",
-          description:
-            "Возвращаемые значения могут быть именованными и использоваться как переменные.",
-        },
-        {
-          name: "Вариативная функция",
-          syntax: "func sum(nums ...int) int { }",
-          description: "Функция, принимающая переменное количество аргументов.",
-        },
-        {
-          name: "Анонимная функция",
-          syntax: "func(x int) int { return x * 2 }",
-          description: "Функция без имени. Может быть присвоена переменной.",
-        },
-      ],
-    },
-    {
-      title: "Методы и интерфейсы",
-      items: [
-        {
-          name: "Объявление метода",
-          syntax: "func (r receiver) methodName() returnType { }",
-          description: "Прикрепление методов к типам с помощью приёмников.",
-        },
-        {
-          name: "Приёмник-указатель",
-          syntax: "func (r *Type) methodName() { }",
-          description:
-            "Используйте приёмник-указатель для изменения приёмника или для больших структур.",
-        },
-        {
-          name: "Объявление интерфейса",
-          syntax: "type Stringer interface { String() string }",
-          description:
-            "Интерфейсы определяют наборы методов. Реализуются неявно.",
-        },
-        {
-          name: "Пустой интерфейс",
-          syntax: "interface{}",
-          description:
-            "Может содержать значения любого типа. Аналогично Object в других языках.",
-        },
-      ],
-    },
-    {
-      title: "Параллелизм",
-      items: [
-        {
-          name: "Горутина",
-          syntax: "go functionCall()",
-          description: "Запуск новой горутины (лёгкого потока).",
-        },
-        {
-          name: "Создание канала",
-          syntax: "ch := make(chan int)",
-          description: "Создание канала для коммуникации между горутинами.",
-        },
-        {
-          name: "Буферизованный канал",
-          syntax: "ch := make(chan int, 10)",
-          description: "Канал с буферной ёмкостью.",
-        },
-        {
-          name: "Операции с каналами",
-          syntax: "ch <- value; value := <-ch",
-          description: "Отправка в канал и получение из канала.",
-        },
-        {
-          name: "Оператор select",
-          syntax:
-            "select { case <-ch1: ...; case ch2 <- value: ...; default: ... }",
-          description: "Ожидание множественных операций с каналами.",
-        },
-        {
-          name: "Закрытие канала",
-          syntax: "close(ch)",
-          description:
-            "Закрытие канала для сигнализации о том, что больше значений не будет отправлено.",
-        },
-      ],
-    },
-    {
-      title: "Обработка ошибок",
-      items: [
-        {
-          name: "Интерфейс error",
-          syntax: "type error interface { Error() string }",
-          description:
-            "Встроенный интерфейс для представления ошибочных состояний.",
-        },
-        {
-          name: "Создание ошибок",
-          syntax: 'errors.New("сообщение об ошибке")',
-          description: "Создание простых значений ошибок.",
-        },
-        {
-          name: "Проверка ошибок",
-          syntax: "if err != nil { }",
-          description: "Идиоматичный способ проверки ошибок в Go.",
-        },
-        {
-          name: "Пользовательская ошибка",
-          syntax:
-            "type MyError struct { ... }; func (e MyError) Error() string { }",
-          description:
-            "Создание пользовательских типов ошибок путём реализации метода Error().",
-        },
-      ],
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white">
-            Справочник языка Go
-          </h2>
-          <p className="mt-4 text-xl text-gray-600 dark:text-gray-400">
-            Краткий справочник по синтаксису Go, типам и языковым конструкциям.
-          </p>
-        </div>
-
-        {/* Table of Contents */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-            📋 Содержание
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {sections.map((section, index) => (
-              <a
-                key={index}
-                href={`#${section.title.toLowerCase().replace(/\s+/g, "-")}`}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors duration-200"
-              >
-                {section.title}
-              </a>
-            ))}
+    <main className="min-h-screen bg-[#f4f7f6] text-slate-900">
+      <section className="relative overflow-hidden bg-[#0b1727] text-white">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-36 h-[28rem] w-[28rem] rounded-full bg-emerald-300/10 blur-3xl" />
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-end lg:px-10">
+          <div className="max-w-3xl">
+            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-emerald-200/20 bg-emerald-200/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200"><span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> Под рукой во время практики</p>
+            <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">Краткий справочник Go</h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg sm:leading-8">Синтаксис, к которому удобно вернуться: короткие объяснения, небольшие примеры и переходы к урокам с практикой.</p>
+          </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-5 sm:p-6">
+            <p className="font-mono text-xs uppercase tracking-[0.18em] text-emerald-200">Навигация</p>
+            <p className="mt-3 text-3xl font-semibold">{sections.length}<span className="ml-2 text-base font-normal text-slate-300">тем</span></p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">Выберите раздел, чтобы перейти к нужной конструкции.</p>
           </div>
         </div>
+      </section>
 
-        {/* Reference Sections */}
-        <div className="space-y-8">
-          {sections.map((section, sectionIndex) => (
-            <div
-              key={sectionIndex}
-              id={section.title.toLowerCase().replace(/\s+/g, "-")}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
-            >
-              <div className="bg-blue-600 px-6 py-4">
-                <h3 className="text-2xl font-bold text-white">
-                  {section.title}
-                </h3>
+      <section className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14 lg:px-10">
+        <nav aria-label="Разделы справочника" className="mb-10 grid gap-2 rounded-2xl border border-slate-200 bg-white p-3 sm:grid-cols-2 lg:grid-cols-4">
+          {sections.map((section) => <a key={section.id} href={`#${section.id}`} className="group flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-slate-700 transition hover:bg-[#eaf7f3] hover:text-emerald-900"><span className="font-mono text-xs text-emerald-700">{section.number}</span>{section.title}<span aria-hidden="true" className="ml-auto text-slate-400 transition group-hover:translate-x-1">→</span></a>)}
+        </nav>
+
+        <div className="space-y-6">
+          {sections.map((section) => (
+            <section key={section.id} id={section.id} className="scroll-mt-24 overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-[0_18px_50px_-38px_rgba(15,23,42,0.35)]">
+              <div className="flex flex-col gap-4 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white p-5 sm:flex-row sm:items-end sm:justify-between sm:p-7">
+                <div className="flex items-start gap-4"><span className="rounded-xl bg-[#d8f5e9] px-3 py-2 font-mono text-sm font-bold text-emerald-900">{section.number}</span><div><h2 className="text-2xl font-semibold tracking-tight">{section.title}</h2><p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">{section.description}</p></div></div>
+                {lessonTitles.has(section.lesson) && <Link href={`/tutorials/${section.lesson}`} className="ml-14 inline-flex w-fit items-center gap-2 text-sm font-semibold text-emerald-800 hover:text-emerald-950 sm:ml-0">К уроку: {lessonTitles.get(section.lesson)} <span aria-hidden="true">↗</span></Link>}
               </div>
-              <div className="p-6">
-                <div className="space-y-6">
-                  {section.items.map((item, itemIndex) => (
-                    <div
-                      key={itemIndex}
-                      className="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-b-0"
-                    >
-                      <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                        {item.name}
-                      </h4>
-                      <div className="bg-gray-900 rounded-lg p-4 mb-3">
-                        <code className="text-green-400 text-sm font-mono">
-                          {item.syntax}
-                        </code>
-                      </div>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">
-                        {item.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+              <div className="grid gap-4 p-4 sm:grid-cols-2 sm:p-6">
+                {section.items.map((item) => <article key={item.title} className="overflow-hidden rounded-2xl border border-slate-200 bg-[#fbfcfc]">
+                  <div className="flex items-center gap-2 border-b border-slate-800 bg-[#111e2e] px-4 py-3"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-rose-300"/><span aria-hidden="true" className="h-2 w-2 rounded-full bg-amber-300"/><span aria-hidden="true" className="h-2 w-2 rounded-full bg-emerald-300"/><h3 className="ml-2 text-xs font-semibold text-slate-200">{item.title}</h3></div>
+                  <pre className="overflow-x-auto bg-[#0b1727] px-4 py-4 text-sm leading-6 text-emerald-100"><code>{item.code}</code></pre>
+                  <p className="px-4 py-4 text-sm leading-6 text-slate-600">{item.note}</p>
+                </article>)}
               </div>
-            </div>
+            </section>
           ))}
         </div>
 
-        {/* Additional Resources */}
-        <div className="mt-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg p-8 text-center">
-          <h3 className="text-2xl font-bold text-white mb-4">
-            📚 Дополнительные ресурсы
-          </h3>
-          <p className="text-green-100 mb-6">
-            Изучите больше ресурсов Go для углубления понимания.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a
-              href="https://golang.org/doc/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200"
-            >
-              Официальная документация
-            </a>
-            <a
-              href="https://pkg.go.dev/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200"
-            >
-              Документация пакетов
-            </a>
-            <a
-              href="https://golang.org/ref/spec"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-gray-900 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200"
-            >
-              Спецификация языка
-            </a>
-          </div>
-        </div>
-      </main>
-    </div>
+        <aside className="mt-8 flex flex-col gap-4 rounded-[1.6rem] bg-[#0b1727] p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div><p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-200">Закрепите синтаксис</p><h2 className="mt-2 text-xl font-semibold">Короткая справка — рядом, практика — в уроке</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Пройдите темы по порядку и примените конструкции в небольших программах.</p></div>
+          <Link href="/tutorials" className="inline-flex w-fit shrink-0 items-center gap-2 rounded-xl bg-emerald-300 px-5 py-3 text-sm font-bold text-[#0b1727] transition hover:bg-emerald-200">К маршруту обучения <span aria-hidden="true">→</span></Link>
+        </aside>
+      </section>
+    </main>
   );
 }

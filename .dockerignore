@@ -5,9 +5,9 @@
 # Ignore node_modules
 node_modules
 
-# Ignore local env files
-.env.local
-.env*.local
+# Ignore secrets and runtime environment files; retain only safe examples
+.env*
+!.env*.example
 
 # Ignore Next.js build output
 .next

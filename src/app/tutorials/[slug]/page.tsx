@@ -9,6 +9,12 @@ import type { Tutorial } from "@/lib/db";
 import { auth } from "@/auth";
 import { Metadata } from "next";
 import MarkdownContent from "@/components/MarkdownContent";
+import {
+  curriculumLessons,
+  curriculumStages,
+  getCurriculumLesson,
+  getLessonNumber,
+} from "@/lib/curriculum";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +24,18 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const curriculumLesson = getCurriculumLesson(slug);
+  if (curriculumLesson) {
+    return {
+      title: `${curriculumLesson.title} | Go | WebSchool`,
+      description: curriculumLesson.description,
+      openGraph: {
+        title: curriculumLesson.title,
+        description: curriculumLesson.description,
+        type: "article",
+      },
+    };
+  }
 
   try {
     const tutorial = await getTutorialBySlug(slug);
@@ -45,12 +63,94 @@ export async function generateMetadata({
   }
 }
 
+function CurriculumLessonPage({ slug }: { slug: string }) {
+  const lesson = getCurriculumLesson(slug);
+  if (!lesson) {
+    notFound();
+  }
+
+  const index = getLessonNumber(slug);
+  const previous = index && index > 1 ? curriculumLessons[index - 2] : undefined;
+  const next = index ? curriculumLessons[index] : undefined;
+  const stage = curriculumStages.find((item) => item.id === lesson.stageId);
+
+  return (
+    <main className="min-h-screen bg-[#f4f7f6] text-slate-900">
+      <header className="relative overflow-hidden bg-[#0b1727] text-white">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-32 h-96 w-96 rounded-full bg-cyan-400/10 blur-3xl" />
+        <div className="relative mx-auto max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
+          <Link href="/tutorials" className="inline-flex items-center gap-2 text-sm font-medium text-slate-300 transition hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-300">← Все этапы</Link>
+          <div className="mt-8 flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.15em] text-emerald-200">
+            <span>{stage?.eyebrow ?? "ПРАКТИЧЕСКИЙ УРОК"}</span>
+            <span aria-hidden="true" className="text-slate-500">/</span>
+            <span>Урок {String(index).padStart(2, "0")} из {curriculumLessons.length}</span>
+            <span className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-slate-200">{lesson.duration}</span>
+          </div>
+          <h1 className="mt-4 max-w-4xl text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">{lesson.title}</h1>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300 sm:text-lg">{lesson.description}</p>
+        </div>
+      </header>
+
+      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-9 sm:px-8 sm:py-12 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-10">
+        <div className="min-w-0 space-y-7">
+          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-9" aria-label="Теория урока">
+            <MarkdownContent content={lesson.content} />
+          </section>
+          <section className="rounded-3xl border border-amber-200 bg-[#fffaf0] p-6 sm:p-8" aria-labelledby="exercise-heading">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-amber-800">Практика</p>
+            <h2 id="exercise-heading" className="mt-2 text-2xl font-semibold tracking-tight">Попробуйте сами</h2>
+            <MarkdownContent content={lesson.exercise} />
+          </section>
+          <section className="rounded-3xl border border-emerald-200 bg-[#effaf5] p-6 sm:p-8" aria-labelledby="check-heading">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-800">Проверка результата</p>
+            <h2 id="check-heading" className="mt-2 text-2xl font-semibold tracking-tight">Как понять, что получилось</h2>
+            <MarkdownContent content={lesson.check} />
+          </section>
+        </div>
+
+        <aside className="space-y-5 lg:sticky lg:top-8 lg:self-start">
+          <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="outcomes-heading">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">Результат урока</p>
+            <h2 id="outcomes-heading" className="mt-2 text-xl font-semibold">Вы научитесь</h2>
+            <ul className="mt-5 space-y-3">
+              {lesson.outcomes.map((outcome) => <li key={outcome} className="flex gap-3 text-sm leading-6 text-slate-700"><span aria-hidden="true" className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-800">✓</span>{outcome}</li>)}
+            </ul>
+          </section>
+          <section className="rounded-3xl border border-cyan-200 bg-[#f0fbff] p-6 shadow-sm" aria-labelledby="run-command-heading">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-800">Практический шаг</p>
+            <h2 id="run-command-heading" className="mt-2 text-xl font-semibold">Запуск программы</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-600">Выполните команду в терминале из каталога упражнения.</p>
+            <pre tabIndex={0} aria-label={`Команда запуска: ${lesson.command}`} className="mt-4 overflow-x-auto rounded-xl bg-[#101c2a] p-4 text-sm text-cyan-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-700"><code>{lesson.command}</code></pre>
+          </section>
+          <div className="rounded-3xl bg-[#0b1727] p-6 text-white">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-cyan-200">Учебный ритм</p>
+            <p className="mt-3 text-sm leading-6 text-slate-300">Сначала прочитайте объяснение, затем напишите решение самостоятельно и сверяйтесь с критериями проверки.</p>
+            <p className="mt-4 text-xs font-medium text-slate-400">Ориентир по времени: {lesson.duration}</p>
+          </div>
+        </aside>
+      </div>
+
+      <nav aria-label="Навигация по урокам" className="mx-auto max-w-7xl px-5 pb-12 sm:px-8 sm:pb-16">
+        <div className="grid gap-3 border-t border-slate-200 pt-6 sm:grid-cols-2">
+          {previous ? <Link href={`/tutorials/${previous.slug}`} className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"><span className="block text-xs font-semibold uppercase tracking-wider text-slate-500">← Предыдущий урок</span><span className="mt-2 block font-semibold">{previous.title}</span></Link> : <span />}
+          {next ? <Link href={`/tutorials/${next.slug}`} className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-left transition hover:border-emerald-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 sm:text-right"><span className="block text-xs font-semibold uppercase tracking-wider text-emerald-800">Следующий урок →</span><span className="mt-2 block font-semibold text-slate-900">{next.title}</span></Link> : <Link href="/tutorials" className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-sm font-semibold text-emerald-900 sm:text-right">Вы завершили маршрут · вернуться к этапам →</Link>}
+        </div>
+      </nav>
+    </main>
+  );
+}
+
 export default async function TutorialPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const curriculumLesson = getCurriculumLesson(slug);
+  if (curriculumLesson) {
+    return <CurriculumLessonPage slug={slug} />;
+  }
+
   let tutorial: Tutorial | null = null;
   let nextTutorial: Tutorial | null = null;
 

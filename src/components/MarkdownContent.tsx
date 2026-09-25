@@ -11,198 +11,106 @@ interface MarkdownContentProps {
 
 export default function MarkdownContent({ content }: MarkdownContentProps) {
   return (
-    <div className="markdown-content">
+    <article className="markdown-content">
       <style jsx global>{`
         .markdown-content {
-          max-width: none;
-          line-height: 1.75;
-          font-size: 1.1rem;
+          color: #334155;
+          font-size: 1rem;
+          line-height: 1.8;
+          overflow-wrap: anywhere;
         }
 
-        .markdown-content h1 {
-          font-size: 2.475rem;
-          font-weight: 700;
-          margin-top: 2rem;
-          margin-bottom: 1.5rem;
-          color: #111827;
+        .markdown-content > :first-child { margin-top: 0; }
+        .markdown-content > :last-child { margin-bottom: 0; }
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3,
+        .markdown-content h4 {
+          color: #0f172a;
+          font-weight: 650;
+          letter-spacing: -0.025em;
+          line-height: 1.25;
         }
-
-        .markdown-content h2 {
-          font-size: 2.0625rem;
-          font-weight: 700;
-          margin-top: 2rem;
-          margin-bottom: 1rem;
-          padding-bottom: 0.5rem;
-          border-bottom: 2px solid #e5e7eb;
-          color: #111827;
-        }
-
-        .markdown-content h3 {
-          font-size: 1.65rem;
-          font-weight: 700;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
-          color: #111827;
-        }
-
-        .markdown-content p {
-          margin-bottom: 1rem;
-          color: #374151;
-          line-height: 1.75;
-        }
-
-        .markdown-content a {
-          color: #2563eb;
-          text-decoration: none;
-        }
-
-        .markdown-content a:hover {
-          text-decoration: underline;
-        }
-
-        .markdown-content strong {
-          font-weight: 600;
-          color: #111827;
-        }
-
+        .markdown-content h1 { margin: 2.2rem 0 1rem; font-size: clamp(1.8rem, 4vw, 2.35rem); }
+        .markdown-content h2 { margin: 2.4rem 0 1rem; padding-bottom: .75rem; border-bottom: 1px solid #e2e8f0; font-size: clamp(1.5rem, 3.2vw, 1.9rem); }
+        .markdown-content h3 { margin: 1.8rem 0 .75rem; font-size: 1.3rem; }
+        .markdown-content h4 { margin: 1.5rem 0 .65rem; font-size: 1.1rem; }
+        .markdown-content p { margin: 1rem 0; }
+        .markdown-content a { color: #087b68; text-decoration: underline; text-decoration-color: #a7ddd0; text-underline-offset: 3px; }
+        .markdown-content a:hover { color: #075a50; text-decoration-color: currentColor; }
+        .markdown-content a:focus-visible { border-radius: 2px; outline: 2px solid #0f766e; outline-offset: 3px; }
+        .markdown-content strong { color: #0f172a; font-weight: 650; }
         .markdown-content ul,
-        .markdown-content ol {
-          margin: 1.5rem 0;
-          padding-left: 1.5rem;
+        .markdown-content ol { margin: 1.2rem 0; padding-left: 1.5rem; }
+        .markdown-content ul { list-style: disc; }
+        .markdown-content ol { list-style: decimal; }
+        .markdown-content li { margin: .4rem 0; padding-left: .25rem; }
+        .markdown-content li::marker { color: #0f9b83; }
+        .markdown-content :not(pre) > code {
+          border: 1px solid #dcebe6;
+          border-radius: .4rem;
+          background: #eff8f5;
+          color: #087b68;
+          padding: .12rem .38rem;
+          font-size: .88em;
+          font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         }
-
-        .markdown-content ul {
-          list-style-type: disc;
-        }
-
-        .markdown-content ol {
-          list-style-type: decimal;
-        }
-
-        .markdown-content li {
-          margin-bottom: 0.5rem;
-          color: #374151;
-        }
-
-        .markdown-content code {
-          background-color: #f3f4f6;
-          color: #db2777;
-          padding: 0.125rem 0.375rem;
-          border-radius: 0.25rem;
-          font-size: 0.875rem;
-          font-family: "Courier New", monospace;
-        }
-
         .markdown-content pre {
-          background-color: #1f2937;
-          color: #f9fafb;
-          padding: 1rem;
-          border-radius: 0.5rem;
-          overflow-x: auto;
+          max-width: 100%;
           margin: 1.5rem 0;
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+          overflow: auto;
+          border: 1px solid #26384a;
+          border-radius: 1rem;
+          background: #101c2a;
+          padding: 1.1rem 1.25rem;
+          color: #e2e8f0;
+          box-shadow: 0 14px 30px -22px rgba(15, 23, 42, .65);
+          scrollbar-color: #526477 #101c2a;
         }
-
+        .markdown-content pre:focus-visible { outline: 3px solid #5eead4; outline-offset: 3px; }
         .markdown-content pre code {
-          background-color: transparent;
+          display: block;
+          min-width: max-content;
+          background: transparent;
           color: inherit;
           padding: 0;
-          border-radius: 0;
-          font-size: 0.875rem;
+          font-size: .875rem;
+          line-height: 1.75;
+          tab-size: 4;
         }
-
         .markdown-content blockquote {
-          border-left: 4px solid #3b82f6;
-          padding-left: 1rem;
-          font-style: italic;
-          color: #4b5563;
           margin: 1.5rem 0;
+          border-left: 3px solid #21a88d;
+          border-radius: 0 .75rem .75rem 0;
+          background: #f0faf7;
+          padding: .75rem 1rem;
+          color: #475569;
         }
+        .markdown-content blockquote > :first-child { margin-top: 0; }
+        .markdown-content blockquote > :last-child { margin-bottom: 0; }
+        .markdown-content img { max-width: 100%; height: auto; border-radius: .9rem; }
+        .markdown-content hr { margin: 2rem 0; border: 0; border-top: 1px solid #e2e8f0; }
+        .markdown-content table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-content th,
+        .markdown-content td { min-width: 8rem; border: 1px solid #dbe4eb; padding: .7rem .8rem; text-align: left; }
+        .markdown-content th { background: #f1f6f5; color: #0f172a; font-weight: 650; }
+        .markdown-content tr:nth-child(even) td { background: #f8fafc; }
 
-        .markdown-content img {
-          border-radius: 0.5rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          margin: 1.5rem 0;
-        }
-
-        .markdown-content hr {
-          border: 0;
-          border-top: 1px solid #e5e7eb;
-          margin: 2rem 0;
-        }
-
-        .markdown-content table {
-          width: 100%;
-          border-collapse: collapse;
-          margin: 1.5rem 0;
-        }
-
-        .markdown-content th {
-          background-color: #f3f4f6;
-          padding: 0.75rem;
-          text-align: left;
-          font-weight: 600;
-          border: 1px solid #e5e7eb;
-        }
-
-        .markdown-content td {
-          padding: 0.75rem;
-          border: 1px solid #e5e7eb;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          .markdown-content h1,
-          .markdown-content h2,
-          .markdown-content h3,
-          .markdown-content strong {
-            color: #f9fafb;
-          }
-
-          .markdown-content h2 {
-            border-bottom-color: #374151;
-          }
-
-          .markdown-content p,
-          .markdown-content li {
-            color: #d1d5db;
-          }
-
-          .markdown-content a {
-            color: #60a5fa;
-          }
-
-          .markdown-content code {
-            background-color: #1f2937;
-            color: #f472b6;
-          }
-
-          .markdown-content blockquote {
-            color: #9ca3af;
-          }
-
-          .markdown-content hr {
-            border-top-color: #374151;
-          }
-
-          .markdown-content th {
-            background-color: #1f2937;
-            border-color: #374151;
-          }
-
-          .markdown-content td {
-            border-color: #374151;
-          }
+        @media (max-width: 640px) {
+          .markdown-content { font-size: .97rem; }
+          .markdown-content pre { margin-right: -.25rem; margin-left: -.25rem; border-radius: .75rem; padding: .9rem; }
         }
       `}</style>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
         components={{
-          h1: ({ node, ...props }) => <h2 {...props} />,
+          h1: ({ node: _node, ...props }) => <h2 {...props} />,
+          pre: ({ node: _node, ...props }) => <pre tabIndex={0} aria-label="Пример кода: используйте горизонтальную прокрутку, если код не помещается" {...props} />,
         }}
       >
         {content}
       </ReactMarkdown>
-    </div>
+    </article>
   );
 }
